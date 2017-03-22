@@ -16,7 +16,7 @@ final class ReturnType extends Type
             return false;
         }
 
-        // If the prototype has no type, the candidate will definitely satisfy it
+        // If the prototype has no return type, the candidate will definitely satisfy it
         if (!$this->hasType()) {
             return true;
         }
@@ -31,14 +31,14 @@ final class ReturnType extends Type
             return false;
         }
 
-        // Built-in type must always be the same
-        if ($this->isBuiltInType() xor $candidateType->isBuiltin()) {
-            return false;
+        // If the string is an exact match it's definitely a match
+        if ($this->getType() === (string)$candidateType) {
+            return true;
         }
 
-        // For built-in types, a simple string comparison is all that's required
-        if ($this->isBuiltInType()) {
-            return $this->getType() === (string)$candidateType;
+        // If a string match didn't pass, built-ins are not possible
+        if ($this->isBuiltInType() || $candidateType->isBuiltin()) {
+            return false;
         }
 
         // Return types are covariant

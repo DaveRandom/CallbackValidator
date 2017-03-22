@@ -63,19 +63,18 @@ final class ParameterType extends Type
             return false;
         }
 
-        // Built-in type must always be the same
-        if ($this->isBuiltInType() xor $candidateType->isBuiltin()) {
+        // If the string is an exact match it's definitely a match
+        if ($this->getType() === (string)$candidateType) {
+            return true;
+        }
+
+        // If a string match didn't pass, built-ins are not possible
+        if ($this->isBuiltInType() || $candidateType->isBuiltin()) {
             return false;
         }
 
-        // For built-in types, a simple string comparison is all that's required
-        if ($this->isBuiltInType()) {
-            return $this->getType() === (string)$candidateType;
-        }
-
         // Parameter types are contravariant
-        return $this->getType() === (string)$candidateType
-            || \is_subclass_of($this->getType(), (string)$candidateType);
+        return \is_subclass_of($this->getType(), (string)$candidateType);
     }
 
     public function __toString(): string
