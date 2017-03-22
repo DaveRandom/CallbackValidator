@@ -4,6 +4,15 @@ namespace DaveRandom\CallbackValidator;
 
 final class CallbackType
 {
+    const PARAMS_INVARIANT     = 0b00000001;
+    const PARAMS_COVARIANT     = 0b00000010;
+    const PARAMS_CONTRAVARIANT = 0b00000100;
+    const RETURN_INVARIANT     = 0b00001000;
+    const RETURN_COVARIANT     = 0b00010000;
+    const RETURN_CONTRAVARIANT = 0b00100000;
+    const INVARIANT            = 0b00001001;
+    const STRICT               = 0b01000000;
+
     /**
      * @var ReturnType
      */
@@ -49,15 +58,22 @@ final class CallbackType
 
     /**
      * @param callable $callable
-     * @return self
+     * @param int $flags
+     * @return CallbackType
      */
-    public static function createFromCallable($callable)
+    public static function createFromCallable($callable, $flags = self::PARAMS_CONTRAVARIANT | self::RETURN_COVARIANT | self::STRICT)
     {
-        $reflection = self::reflectCallable($callable);
+        try {
+            $reflection = self::reflectCallable($callable);
+        } catch (\ReflectionException $e) {
+            throw new InvalidCallbackTypeException('Failed to reflect the supplied callable', 0, $e);
+        }
 
         return new self(
-            ReturnType::createFromReflectionReflectionFunctionAbstract($reflection),
-            array_map([ParameterType::class, 'createFromReflectionParameter'], $reflection->getParameters())
+            ReturnType::createFromReflectionFunctionAbstract($reflection, $flags),
+            array_map(function($parameter) use($flags) {
+                return ParameterType::createFromReflectionParameter($parameter, $flags);
+            }, $reflection->getParameters())
         );
     }
 
@@ -73,7 +89,7 @@ final class CallbackType
             return false;
         }
 
-        $lastParameter = null;
+        $last = null;
 
         foreach ($candidate->getParameters() as $position => $parameter) {
             // Parameters that exist in the prototype must always be satisfied directly
@@ -82,7 +98,7 @@ final class CallbackType
                     return false;
                 }
 
-                $lastParameter = $this->parameters[$position];
+                $last = $this->parameters[$position];
                 continue;
             }
 
@@ -92,7 +108,7 @@ final class CallbackType
             }
 
             // If the last arg of the prototype is variadic, any additional args the candidate accepts must satisfy it
-            if ($lastParameter !== null && $lastParameter->isVariadic() && !$lastParameter->isSatisfiedBy($parameter)) {
+            if ($last !== null && ($last->flags & ParameterType::FLAG_VARIADIC) && !$last->isSatisfiedBy($parameter)) {
                 return false;
             }
         }
@@ -107,7 +123,7 @@ final class CallbackType
     {
         $string = 'function ';
 
-        if ($this->returnType->isByReference()) {
+        if ($this->returnType->flags & Type::FLAG_REFERENCE) {
             $string .= '& ';
         }
 
@@ -116,7 +132,7 @@ final class CallbackType
         for ($i = $o = 0, $l = count($this->parameters) - 1; $i < $l; $i++) {
             $string .= $this->parameters[$i];
 
-            if (!$o && !$this->parameters[$i + 1]->isOptional()) {
+            if (!$o && !($this->parameters[$i + 1]->flags & ParameterType::FLAG_OPTIONAL)) {
                 $string .= ', ';
                 continue;
             }
@@ -135,7 +151,7 @@ final class CallbackType
 
         $string .= ')';
 
-        if ($this->returnType->hasType()) {
+        if ($this->returnType->name !== null) {
             $string .= ' : ' . $this->returnType;
         }
 

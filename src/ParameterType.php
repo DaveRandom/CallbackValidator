@@ -4,62 +4,45 @@ namespace DaveRandom\CallbackValidator;
 
 final class ParameterType extends Type
 {
-    const VARIADIC  = 0b00001000;
-    const OPTIONAL  = 0b00010000;
+    const FLAG_VARIADIC  = 0b00000001 << 16;
+    const FLAG_OPTIONAL  = 0b00000010 << 16;
 
     /**
      * @var string
      */
-    private $name;
+    private $paramName;
 
     /**
      * @param \ReflectionParameter $parameter
-     * @return self
+     * @param $flags
+     * @return ParameterType
      */
-    public static function createFromReflectionParameter($parameter)
+    public static function createFromReflectionParameter($parameter, $flags)
     {
-        $flags = 0;
-
         if ($parameter->isVariadic()) {
-            $flags |= self::VARIADIC;
+            $flags |= self::FLAG_VARIADIC;
         }
 
         if ($parameter->isPassedByReference()) {
-            $flags |= self::REFERENCE;
+            $flags |= self::FLAG_REFERENCE;
         }
 
         if ($parameter->isOptional()) {
-            $flags |= self::OPTIONAL;
+            $flags |= self::FLAG_OPTIONAL;
         }
 
         return new self($parameter->getName(), $parameter->getType(), $flags);
     }
 
     /**
-     * @param string $name
+     * @param string $paramName
      * @param \ReflectionType|null $type
      * @param int $additionalFlags
      */
-    protected function __construct($name, $type, $additionalFlags)
+    protected function __construct($paramName, $type, $additionalFlags)
     {
         parent::__construct($type, $additionalFlags);
-        $this->name = $name;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isVariadic()
-    {
-        return $this->hasFlag(self::VARIADIC);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isOptional()
-    {
-        return $this->hasFlag(self::OPTIONAL);
+        $this->paramName = $paramName;
     }
 
     /**
@@ -69,7 +52,7 @@ final class ParameterType extends Type
     public function isSatisfiedBy($candidate)
     {
         // By-ref must always be the same
-        if ($candidate->isPassedByReference() xor $this->isByReference()) {
+        if ($candidate->isPassedByReference() xor ($this->flags & self::FLAG_REFERENCE)) {
             return false;
         }
 
@@ -81,22 +64,22 @@ final class ParameterType extends Type
         $candidateType = $candidate->getType();
 
         // If the prototype is nullable, the candidate must be as well
-        if ($this->isNullable() && !$candidateType->allowsNull()) {
+        if (($this->flags & self::FLAG_NULLABLE) && !$candidateType->allowsNull()) {
             return false;
         }
 
         // If the string is an exact match it's definitely a match
-        if ($this->getType() === (string)$candidateType) {
+        if ($this->name === (string)$candidateType) {
             return true;
         }
 
         // If a string match didn't pass, built-ins are not possible
-        if ($this->isBuiltInType() || $candidateType->isBuiltin()) {
+        if (($this->flags & self::FLAG_BUILTIN) || $candidateType->isBuiltin()) {
             return false;
         }
 
         // Parameter types are contravariant
-        return \is_subclass_of($this->getType(), (string)$candidateType);
+        return \is_subclass_of($this->name, (string)$candidateType);
     }
 
     /**
@@ -106,22 +89,22 @@ final class ParameterType extends Type
     {
         $string = '';
 
-        if ($this->hasType()) {
-            if ($this->isNullable()) {
+        if ($this->name !== null) {
+            if ($this->flags & self::FLAG_NULLABLE) {
                 $string .= '?';
             }
 
-            $string .= $this->getType() . ' ';
+            $string .= $this->name . ' ';
         }
 
-        if ($this->isByReference()) {
+        if ($this->flags & self::FLAG_REFERENCE) {
             $string .= '&';
         }
 
-        if ($this->isVariadic()) {
+        if ($this->flags & self::FLAG_VARIADIC) {
             $string .= '...';
         }
 
-        return $string . '$' . $this->name;
+        return $string . '$' . $this->paramName;
     }
 }

@@ -20,5 +20,10 @@
     "psr-4": {
       "DaveRandom\\CallbackValidator\\": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "DaveRandom\\CallbackValidator\\Test\\": "tests/"
+    }
   }
 }

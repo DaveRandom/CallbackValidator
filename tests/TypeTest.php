@@ -11,32 +11,32 @@ class TypeTest extends TestCase
     {
         /** @var Type $type */
         $type = new class extends Type {
+            public $flags;
             public function __construct() {
                 parent::__construct(null, 0);
             }
         };
 
-        $this->assertFalse($type->hasType());
-        $this->assertSame(null, $type->getType());
-        $this->assertFalse($type->isNullable());
-        $this->assertFalse($type->isBuiltInType());
-        $this->assertFalse($type->isByReference());
+        $this->assertSame(null, $type->name);
+        $this->assertFalse((bool)($type->flags & Type::FLAG_NULLABLE));
+        $this->assertFalse((bool)($type->flags & Type::FLAG_BUILTIN));
+        $this->assertFalse((bool)($type->flags & Type::FLAG_REFERENCE));
     }
 
     public function testAdditionalFlags()
     {
         /** @var Type $type */
         $type = new class extends Type {
+            public $flags;
             public function __construct() {
-                parent::__construct(null, self::REFERENCE);
+                parent::__construct(null, Type::FLAG_REFERENCE);
             }
         };
 
-        $this->assertFalse($type->hasType());
-        $this->assertSame(null, $type->getType());
-        $this->assertFalse($type->isNullable());
-        $this->assertFalse($type->isBuiltInType());
-        $this->assertTrue($type->isByReference());
+        $this->assertSame(null, $type->name);
+        $this->assertFalse((bool)($type->flags & Type::FLAG_NULLABLE));
+        $this->assertFalse((bool)($type->flags & Type::FLAG_BUILTIN));
+        $this->assertTrue((bool)($type->flags & Type::FLAG_REFERENCE));
     }
 
     public function testBuiltInType()
@@ -49,11 +49,10 @@ class TypeTest extends TestCase
             }
         };
 
-        $this->assertTrue($type->hasType());
-        $this->assertSame('string', $type->getType());
-        $this->assertFalse($type->isNullable());
-        $this->assertTrue($type->isBuiltInType());
-        $this->assertFalse($type->isByReference());
+        $this->assertSame(Type::TYPE_STRING, $type->name);
+        $this->assertFalse((bool)($type->flags & Type::FLAG_NULLABLE));
+        $this->assertTrue((bool)($type->flags & Type::FLAG_BUILTIN));
+        $this->assertFalse((bool)($type->flags & Type::FLAG_REFERENCE));
     }
 
     public function testClassType()
@@ -66,44 +65,41 @@ class TypeTest extends TestCase
             }
         };
 
-        $this->assertTrue($type->hasType());
-        $this->assertSame(Type::class, $type->getType());
-        $this->assertFalse($type->isNullable());
-        $this->assertFalse($type->isBuiltInType());
-        $this->assertFalse($type->isByReference());
+        $this->assertSame(Type::class, $type->name);
+        $this->assertFalse((bool)($type->flags & Type::FLAG_NULLABLE));
+        $this->assertFalse((bool)($type->flags & Type::FLAG_BUILTIN));
+        $this->assertFalse((bool)($type->flags & Type::FLAG_REFERENCE));
     }
 
     public function testNullableBuiltInType()
     {
         /** @var Type $type */
         $type = new class extends Type {
-            public function method(?string $arg) {}
+            public function method(string $arg = null) {}
             public function __construct() {
                 parent::__construct((new \ReflectionMethod($this, 'method'))->getParameters()[0]->getType(), 0);
             }
         };
 
-        $this->assertTrue($type->hasType());
-        $this->assertSame('string', $type->getType());
-        $this->assertTrue($type->isNullable());
-        $this->assertTrue($type->isBuiltInType());
-        $this->assertFalse($type->isByReference());
+        $this->assertSame(Type::TYPE_STRING, $type->name);
+        $this->assertTrue((bool)($type->flags & Type::FLAG_NULLABLE));
+        $this->assertTrue((bool)($type->flags & Type::FLAG_BUILTIN));
+        $this->assertFalse((bool)($type->flags & Type::FLAG_REFERENCE));
     }
 
     public function testNullableClassType()
     {
         /** @var Type $type */
         $type = new class extends Type {
-            public function method(?Type $arg) {}
+            public function method(Type $arg = null) {}
             public function __construct() {
                 parent::__construct((new \ReflectionMethod($this, 'method'))->getParameters()[0]->getType(), 0);
             }
         };
 
-        $this->assertTrue($type->hasType());
-        $this->assertSame(Type::class, $type->getType());
-        $this->assertTrue($type->isNullable());
-        $this->assertFalse($type->isBuiltInType());
-        $this->assertFalse($type->isByReference());
+        $this->assertSame(Type::class, $type->name);
+        $this->assertTrue((bool)($type->flags & Type::FLAG_NULLABLE));
+        $this->assertFalse((bool)($type->flags & Type::FLAG_BUILTIN));
+        $this->assertFalse((bool)($type->flags & Type::FLAG_REFERENCE));
     }
 }
