@@ -34,4 +34,6 @@ foreach ($tests as $test) {
 
 ## TODO
 
-Pretty much everything
+- Tests
+- Explain (text explanation of why callback does not validate)
+- Check PHP 7.0 support
