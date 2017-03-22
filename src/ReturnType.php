@@ -7,7 +7,6 @@ final class ReturnType extends Type
     /**
      * @param \ReflectionFunctionAbstract $reflection
      * @return self
-     * @internal
      */
     public static function createFromReflectionReflectionFunctionAbstract($reflection)
     {
@@ -18,7 +17,6 @@ final class ReturnType extends Type
      * @param \ReflectionType|null $candidateType
      * @param bool $candidateReturnsReference
      * @return bool
-     * @internal
      */
     public function isSatisfiedBy($candidateType, $candidateReturnsReference)
     {
@@ -58,7 +56,6 @@ final class ReturnType extends Type
 
     /**
      * @return string
-     * @internal
      */
     public function __toString()
     {

@@ -38,16 +38,6 @@ final class CallbackType
     }
 
     /**
-     * @param ReturnType $returnType
-     * @param ParameterType[] $parameters
-     */
-    private function __construct($returnType, $parameters)
-    {
-        $this->returnType = $returnType;
-        $this->parameters = $parameters;
-    }
-
-    /**
      * @param callable $callable
      * @return self
      */
@@ -59,6 +49,12 @@ final class CallbackType
             ReturnType::createFromReflectionReflectionFunctionAbstract($reflection),
             array_map([ParameterType::class, 'createFromReflectionParameter'], $reflection->getParameters())
         );
+    }
+
+    private function __construct($returnType, $parameters)
+    {
+        $this->returnType = $returnType;
+        $this->parameters = $parameters;
     }
 
     /**
