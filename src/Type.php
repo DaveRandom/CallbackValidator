@@ -4,9 +4,9 @@ namespace DaveRandom\CallbackValidator;
 
 abstract class Type
 {
-    protected const BUILT_IN  = 0b0001;
-    protected const NULLABLE  = 0b0010;
-    protected const REFERENCE = 0b0100;
+    const BUILT_IN  = 0b00000001;
+    const NULLABLE  = 0b00000010;
+    const REFERENCE = 0b00000100;
 
     /**
      * @var string|null

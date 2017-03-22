@@ -4,8 +4,8 @@ namespace DaveRandom\CallbackValidator;
 
 final class ParameterType extends Type
 {
-    private const VARIADIC  = 0b00001000;
-    private const OPTIONAL  = 0b00010000;
+    const VARIADIC  = 0b00001000;
+    const OPTIONAL  = 0b00010000;
 
     /**
      * @var string
