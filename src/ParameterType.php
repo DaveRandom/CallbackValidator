@@ -15,6 +15,7 @@ final class ParameterType extends Type
     /**
      * @param \ReflectionParameter $parameter
      * @return self
+     * @internal
      */
     public static function createFromReflectionParameter($parameter)
     {
@@ -39,6 +40,7 @@ final class ParameterType extends Type
      * @param string $name
      * @param \ReflectionType|null $type
      * @param int $additionalFlags
+     * @internal
      */
     protected function __construct($name, $type, $additionalFlags)
     {
@@ -48,6 +50,7 @@ final class ParameterType extends Type
 
     /**
      * @return bool
+     * @internal
      */
     public function isVariadic()
     {
@@ -56,6 +59,7 @@ final class ParameterType extends Type
 
     /**
      * @return bool
+     * @internal
      */
     public function isOptional()
     {
@@ -65,6 +69,7 @@ final class ParameterType extends Type
     /**
      * @param \ReflectionParameter $candidate
      * @return bool
+     * @internal
      */
     public function isSatisfiedBy($candidate)
     {
@@ -101,6 +106,7 @@ final class ParameterType extends Type
 
     /**
      * @return string
+     * @internal
      */
     public function __toString()
     {

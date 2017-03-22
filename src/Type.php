@@ -21,6 +21,7 @@ abstract class Type
     /**
      * @param \ReflectionType|null $type
      * @param int $additionalFlags
+     * @internal
      */
     protected function __construct($type, $additionalFlags)
     {
@@ -44,6 +45,7 @@ abstract class Type
     /**
      * @param int $flag
      * @return bool
+     * @internal
      */
     protected function hasFlag($flag)
     {
@@ -52,6 +54,7 @@ abstract class Type
 
     /**
      * @return string|null
+     * @internal
      */
     public function getType()
     {
@@ -60,6 +63,7 @@ abstract class Type
 
     /**
      * @return bool
+     * @internal
      */
     public function hasType()
     {
@@ -68,6 +72,7 @@ abstract class Type
 
     /**
      * @return bool
+     * @internal
      */
     public function isBuiltInType()
     {
@@ -76,6 +81,7 @@ abstract class Type
 
     /**
      * @return bool
+     * @internal
      */
     public function isByReference()
     {
@@ -84,6 +90,7 @@ abstract class Type
 
     /**
      * @return bool
+     * @internal
      */
     public function isNullable()
     {
