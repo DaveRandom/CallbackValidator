@@ -1,10 +1,4 @@
 <?php declare(strict_types = 1);
-/**
- * Created by PhpStorm.
- * User: chris.wright
- * Date: 22/03/2017
- * Time: 01:34
- */
 
 namespace DaveRandom\CallbackValidator\Test;
 
