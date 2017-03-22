@@ -4,10 +4,21 @@ namespace DaveRandom\CallbackValidator;
 
 final class CallbackType
 {
+    /**
+     * @var ReturnType
+     */
     private $returnType;
+
+    /**
+     * @var ParameterType[]
+     */
     private $parameters;
 
-    private static function reflectCallable(callable $callback): \ReflectionFunctionAbstract
+    /**
+     * @param callable $callback
+     * @return \ReflectionFunction|\ReflectionMethod
+     */
+    private static function reflectCallable($callback)
     {
         if ($callback instanceof \Closure) {
             return new \ReflectionFunction($callback);
@@ -26,23 +37,31 @@ final class CallbackType
             : new \ReflectionFunction($callback);
     }
 
-    public static function createFromCallable(callable $callable): CallbackType
+    /**
+     * @param callable $callable
+     * @return self
+     */
+    public static function createFromCallable($callable)
     {
         $reflection = self::reflectCallable($callable);
 
         return new self(
             ReturnType::createFromReflectionReflectionFunctionAbstract($reflection),
-            ...array_map([ParameterType::class, 'createFromReflectionParameter'], $reflection->getParameters())
+            array_map([ParameterType::class, 'createFromReflectionParameter'], $reflection->getParameters())
         );
     }
 
-    private function __construct(ReturnType $returnType, ParameterType ...$parameters)
+    private function __construct($returnType, $parameters)
     {
         $this->returnType = $returnType;
         $this->parameters = $parameters;
     }
 
-    public function isSatisfiedBy(callable $callable): bool
+    /**
+     * @param callable $callable
+     * @return bool
+     */
+    public function isSatisfiedBy($callable)
     {
         $candidate = self::reflectCallable($callable);
 
@@ -77,7 +96,10 @@ final class CallbackType
         return true;
     }
 
-    public function __toString(): string
+    /**
+     * @return string
+     */
+    public function __toString()
     {
         $string = 'function ';
 

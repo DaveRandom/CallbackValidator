@@ -4,12 +4,21 @@ namespace DaveRandom\CallbackValidator;
 
 final class ReturnType extends Type
 {
-    public static function createFromReflectionReflectionFunctionAbstract(\ReflectionFunctionAbstract $reflection): self
+    /**
+     * @param \ReflectionFunctionAbstract $reflection
+     * @return self
+     */
+    public static function createFromReflectionReflectionFunctionAbstract($reflection)
     {
         return new self($reflection->getReturnType(), $reflection->returnsReference() ? self::REFERENCE : 0);
     }
 
-    public function isSatisfiedBy(?\ReflectionType $candidateType, bool $candidateReturnsReference)
+    /**
+     * @param \ReflectionType|null $candidateType
+     * @param bool $candidateReturnsReference
+     * @return bool
+     */
+    public function isSatisfiedBy($candidateType, $candidateReturnsReference)
     {
         // By-ref must always be the same
         if ($candidateReturnsReference xor $this->isByReference()) {
@@ -45,7 +54,10 @@ final class ReturnType extends Type
         return \is_subclass_of((string)$candidateType, $this->getType());
     }
 
-    public function __toString(): string
+    /**
+     * @return string
+     */
+    public function __toString()
     {
         return $this->isNullable()
             ? '?' . $this->getType()

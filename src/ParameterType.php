@@ -7,9 +7,16 @@ final class ParameterType extends Type
     private const VARIADIC  = 0b00001000;
     private const OPTIONAL  = 0b00010000;
 
+    /**
+     * @var string
+     */
     private $name;
 
-    public static function createFromReflectionParameter(\ReflectionParameter $parameter): self
+    /**
+     * @param \ReflectionParameter $parameter
+     * @return self
+     */
+    public static function createFromReflectionParameter($parameter)
     {
         $flags = 0;
 
@@ -28,23 +35,38 @@ final class ParameterType extends Type
         return new self($parameter->getName(), $parameter->getType(), $flags);
     }
 
-    protected function __construct(string $name, ?\ReflectionType $type, int $additionalFlags)
+    /**
+     * @param string $name
+     * @param \ReflectionType|null $type
+     * @param int $additionalFlags
+     */
+    protected function __construct($name, $type, $additionalFlags)
     {
         parent::__construct($type, $additionalFlags);
         $this->name = $name;
     }
 
-    public function isVariadic(): bool
+    /**
+     * @return bool
+     */
+    public function isVariadic()
     {
         return $this->hasFlag(self::VARIADIC);
     }
 
-    public function isOptional(): bool
+    /**
+     * @return bool
+     */
+    public function isOptional()
     {
         return $this->hasFlag(self::OPTIONAL);
     }
 
-    public function isSatisfiedBy(\ReflectionParameter $candidate): bool
+    /**
+     * @param \ReflectionParameter $candidate
+     * @return bool
+     */
+    public function isSatisfiedBy($candidate)
     {
         // By-ref must always be the same
         if ($candidate->isPassedByReference() xor $this->isByReference()) {
@@ -77,7 +99,10 @@ final class ParameterType extends Type
         return \is_subclass_of($this->getType(), (string)$candidateType);
     }
 
-    public function __toString(): string
+    /**
+     * @return string
+     */
+    public function __toString()
     {
         $string = '';
 

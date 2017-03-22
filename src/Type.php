@@ -8,10 +8,21 @@ abstract class Type
     protected const NULLABLE  = 0b0010;
     protected const REFERENCE = 0b0100;
 
+    /**
+     * @var string|null
+     */
     private $type;
+
+    /**
+     * @var int
+     */
     private $flags;
 
-    protected function __construct(?\ReflectionType $type, int $additionalFlags)
+    /**
+     * @param \ReflectionType|null $type
+     * @param int $additionalFlags
+     */
+    protected function __construct($type, $additionalFlags)
     {
         $this->flags = $additionalFlags;
 
@@ -30,32 +41,51 @@ abstract class Type
         $this->type = (string)$type;
     }
 
-    protected function hasFlag(int $flag): bool
+    /**
+     * @param int $flag
+     * @return bool
+     */
+    protected function hasFlag($flag)
     {
         return (bool)($this->flags & $flag);
     }
 
-    public function getType(): ?string
+    /**
+     * @return string|null
+     */
+    public function getType()
     {
         return $this->type;
     }
 
-    public function hasType(): bool
+    /**
+     * @return bool
+     */
+    public function hasType()
     {
         return $this->type !== null;
     }
 
-    public function isBuiltInType(): bool
+    /**
+     * @return bool
+     */
+    public function isBuiltInType()
     {
         return (bool)($this->flags & self::BUILT_IN);
     }
 
-    public function isByReference(): bool
+    /**
+     * @return bool
+     */
+    public function isByReference()
     {
         return (bool)($this->flags & self::REFERENCE);
     }
 
-    public function isNullable(): bool
+    /**
+     * @return bool
+     */
+    public function isNullable()
     {
         return (bool)($this->flags & self::NULLABLE);
     }
