@@ -10,7 +10,7 @@ use DaveRandom\CallbackValidator\MatchTester;
 use DaveRandom\CallbackValidator\BuiltInTypes;
 use PHPUnit\Framework\TestCase;
 
-class WeakModeCastsTest extends TestCase
+class MatchTesterTest extends TestCase
 {
     public function testScalarTypesSatisfyScalarTypes()
     {
@@ -58,11 +58,6 @@ class WeakModeCastsTest extends TestCase
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::BOOL));
     }
 
-    public function testArraySatisfiesIterable()
-    {
-        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::ARRAY));
-    }
-
     public function testClassImplementingTraversableSatisfiesIterable()
     {
         $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, ClassImplementingTraversable::class));
@@ -93,7 +88,7 @@ class WeakModeCastsTest extends TestCase
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::STRING, ClassImplementingNothing::class));
     }
 
-    public function testNonScalarBuiltInTypesDoNotSatisfyAnyOtherBuiltInType()
+    public function testNonScalarBuiltInTypesDoNotSatisfyAnyBuiltInTypesTheyShouldnt()
     {
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::STRING, BuiltInTypes::ARRAY));
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::STRING, BuiltInTypes::CALLABLE));
@@ -115,13 +110,11 @@ class WeakModeCastsTest extends TestCase
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::BOOL, BuiltInTypes::VOID));
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::BOOL, BuiltInTypes::ITERABLE));
 
-        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::ARRAY));
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::CALLABLE));
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::VOID));
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::ITERABLE));
 
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::ARRAY));
-        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::CALLABLE));
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::VOID));
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::ITERABLE));
 
@@ -130,9 +123,15 @@ class WeakModeCastsTest extends TestCase
         $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::VOID));
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::ITERABLE));
 
-        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::ARRAY));
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::CALLABLE));
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::VOID));
+    }
+
+    public function testNonScalarBuiltInTypesSatisfyBuiltInTypesTheyShould()
+    {
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::ARRAY));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::CALLABLE));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::ARRAY));
         $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::ITERABLE));
     }
 }
