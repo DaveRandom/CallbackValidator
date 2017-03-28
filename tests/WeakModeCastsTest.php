@@ -6,127 +6,133 @@ use DaveRandom\CallbackValidator\Test\Fixtures\ClassImplementingInvoke;
 use DaveRandom\CallbackValidator\Test\Fixtures\ClassImplementingNothing;
 use DaveRandom\CallbackValidator\Test\Fixtures\ClassImplementingToString;
 use DaveRandom\CallbackValidator\Test\Fixtures\ClassImplementingTraversable;
-use DaveRandom\CallbackValidator\Type;
+use DaveRandom\CallbackValidator\MatchTester;
+use DaveRandom\CallbackValidator\BuiltInTypes;
 use PHPUnit\Framework\TestCase;
 
 class WeakModeCastsTest extends TestCase
 {
     public function testScalarTypesSatisfyScalarTypes()
     {
-        $stringType = (new \ReflectionFunction(function(string $s){}))->getParameters()[0]->getType();
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($stringType, Type::TYPE_STRING));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($stringType, Type::TYPE_INT));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($stringType, Type::TYPE_FLOAT));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($stringType, Type::TYPE_BOOL));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::STRING, BuiltInTypes::STRING));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::STRING, BuiltInTypes::INT));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::STRING, BuiltInTypes::FLOAT));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::STRING, BuiltInTypes::BOOL));
 
-        $intType = (new \ReflectionFunction(function(int $i){}))->getParameters()[0]->getType();
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($intType, Type::TYPE_STRING));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($intType, Type::TYPE_INT));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($intType, Type::TYPE_FLOAT));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($intType, Type::TYPE_BOOL));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::INT, BuiltInTypes::STRING));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::INT, BuiltInTypes::INT));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::INT, BuiltInTypes::FLOAT));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::INT, BuiltInTypes::BOOL));
 
-        $floatType = (new \ReflectionFunction(function(float $f){}))->getParameters()[0]->getType();
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($floatType, Type::TYPE_STRING));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($floatType, Type::TYPE_INT));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($floatType, Type::TYPE_FLOAT));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($floatType, Type::TYPE_BOOL));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::FLOAT, BuiltInTypes::STRING));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::FLOAT, BuiltInTypes::INT));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::FLOAT, BuiltInTypes::FLOAT));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::FLOAT, BuiltInTypes::BOOL));
 
-        $boolType = (new \ReflectionFunction(function(bool $b){}))->getParameters()[0]->getType();
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($boolType, Type::TYPE_STRING));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($boolType, Type::TYPE_INT));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($boolType, Type::TYPE_FLOAT));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($boolType, Type::TYPE_BOOL));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::BOOL, BuiltInTypes::STRING));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::BOOL, BuiltInTypes::INT));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::BOOL, BuiltInTypes::FLOAT));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::BOOL, BuiltInTypes::BOOL));
     }
 
     public function testScalarTypesDoNotSatisfyNonScalarBuiltInTypes()
     {
-        $stringType = (new \ReflectionFunction(function(string $s){}))->getParameters()[0]->getType();
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($stringType, Type::TYPE_ARRAY));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($stringType, Type::TYPE_VOID));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($stringType, Type::TYPE_CALLABLE));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($stringType, Type::TYPE_ITERABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::STRING));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::INT));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::FLOAT));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::BOOL));
 
-        $intType = (new \ReflectionFunction(function(int $i){}))->getParameters()[0]->getType();
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($intType, Type::TYPE_ARRAY));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($intType, Type::TYPE_VOID));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($intType, Type::TYPE_CALLABLE));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($intType, Type::TYPE_ITERABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::STRING));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::INT));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::FLOAT));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::BOOL));
 
-        $floatType = (new \ReflectionFunction(function(float $f){}))->getParameters()[0]->getType();
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($floatType, Type::TYPE_ARRAY));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($floatType, Type::TYPE_VOID));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($floatType, Type::TYPE_CALLABLE));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($floatType, Type::TYPE_ITERABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::STRING));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::INT));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::FLOAT));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::BOOL));
 
-        $boolType = (new \ReflectionFunction(function(bool $b){}))->getParameters()[0]->getType();
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($boolType, Type::TYPE_ARRAY));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($boolType, Type::TYPE_VOID));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($boolType, Type::TYPE_CALLABLE));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($boolType, Type::TYPE_ITERABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::STRING));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::INT));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::FLOAT));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::BOOL));
     }
 
     public function testArraySatisfiesIterable()
     {
-        $type = (new \ReflectionFunction(function(array $c){}))->getParameters()[0]->getType();
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($type, Type::TYPE_ITERABLE));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::ARRAY));
     }
 
     public function testClassImplementingTraversableSatisfiesIterable()
     {
-        $type = (new \ReflectionFunction(function(ClassImplementingTraversable $c){}))->getParameters()[0]->getType();
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($type, Type::TYPE_ITERABLE));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, ClassImplementingTraversable::class));
     }
 
     public function testClassNotImplementingTraversableDoesNotSatisfyIterable()
     {
-        $type = (new \ReflectionFunction(function(ClassImplementingNothing $c){}))->getParameters()[0]->getType();
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($type, Type::TYPE_ITERABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, ClassImplementingNothing::class));
     }
 
     public function testClassImplementingInvokeSatisfiesCallable()
     {
-        $type = (new \ReflectionFunction(function(ClassImplementingInvoke $c){}))->getParameters()[0]->getType();
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($type, Type::TYPE_CALLABLE));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, ClassImplementingInvoke::class));
     }
 
     public function testClassNotImplementingInvokeDoesNotSatisfyCallable()
     {
-        $type = (new \ReflectionFunction(function(ClassImplementingNothing $c){}))->getParameters()[0]->getType();
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($type, Type::TYPE_CALLABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, ClassImplementingNothing::class));
     }
 
     public function testClassImplementingToStringSatisfiesString()
     {
-        $type = (new \ReflectionFunction(function(ClassImplementingToString $c){}))->getParameters()[0]->getType();
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($type, Type::TYPE_STRING));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::STRING, ClassImplementingToString::class));
     }
 
     public function testClassNotImplementingToStringDoesNotSatisfyString()
     {
-        $type = (new \ReflectionFunction(function(ClassImplementingNothing $c){}))->getParameters()[0]->getType();
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($type, Type::TYPE_STRING));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::STRING, ClassImplementingNothing::class));
     }
 
     public function testNonScalarBuiltInTypesDoNotSatisfyAnyOtherBuiltInType()
     {
-        $arrayType = (new \ReflectionFunction(function(array $a){}))->getParameters()[0]->getType();
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($arrayType, Type::TYPE_STRING));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($arrayType, Type::TYPE_INT));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($arrayType, Type::TYPE_FLOAT));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($arrayType, Type::TYPE_BOOL));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($arrayType, Type::TYPE_ARRAY));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($arrayType, Type::TYPE_CALLABLE));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($arrayType, Type::TYPE_VOID));
-        // array *does* satisfy to iterable!
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::STRING, BuiltInTypes::ARRAY));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::STRING, BuiltInTypes::CALLABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::STRING, BuiltInTypes::VOID));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::STRING, BuiltInTypes::ITERABLE));
 
-        $callableType = (new \ReflectionFunction(function(callable $c){}))->getParameters()[0]->getType();
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($callableType, Type::TYPE_STRING));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($callableType, Type::TYPE_INT));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($callableType, Type::TYPE_FLOAT));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($callableType, Type::TYPE_BOOL));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($callableType, Type::TYPE_ARRAY));
-        $this->assertTrue(Type::satisfiesBuiltInTypeInWeakMode($callableType, Type::TYPE_CALLABLE));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($callableType, Type::TYPE_VOID));
-        $this->assertFalse(Type::satisfiesBuiltInTypeInWeakMode($callableType, Type::TYPE_ITERABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::INT, BuiltInTypes::ARRAY));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::INT, BuiltInTypes::CALLABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::INT, BuiltInTypes::VOID));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::INT, BuiltInTypes::ITERABLE));
+
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::FLOAT, BuiltInTypes::ARRAY));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::FLOAT, BuiltInTypes::CALLABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::FLOAT, BuiltInTypes::VOID));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::FLOAT, BuiltInTypes::ITERABLE));
+
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::BOOL, BuiltInTypes::ARRAY));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::BOOL, BuiltInTypes::CALLABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::BOOL, BuiltInTypes::VOID));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::BOOL, BuiltInTypes::ITERABLE));
+
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::ARRAY));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::CALLABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::VOID));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::ITERABLE));
+
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::ARRAY));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::CALLABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::VOID));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::ITERABLE));
+
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::ARRAY));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::CALLABLE));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::VOID));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::ITERABLE));
+
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::ARRAY));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::CALLABLE));
+        $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::VOID));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::ITERABLE));
     }
 }

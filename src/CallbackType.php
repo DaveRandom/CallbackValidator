@@ -4,14 +4,37 @@ namespace DaveRandom\CallbackValidator;
 
 final class CallbackType
 {
-    const PARAMS_INVARIANT     = 0b00000001;
+    /**
+     * Contravariant parameters allow implementors to specify a supertype of that which is specified in the prototype
+     */
+    const PARAMS_CONTRAVARIANT = 0b00000001;
+
+    /**
+     * Covariant parameters allow implementors to specify a subtype of that which is specified in the prototype
+     * Usually this isn't a good idea, it's not type-safe, do not use unless you understand what you are doing!
+     */
     const PARAMS_COVARIANT     = 0b00000010;
-    const PARAMS_CONTRAVARIANT = 0b00000100;
-    const RETURN_INVARIANT     = 0b00001000;
-    const RETURN_COVARIANT     = 0b00010000;
-    const RETURN_CONTRAVARIANT = 0b00100000;
-    const INVARIANT            = 0b00001001;
-    const STRICT               = 0b01000000;
+
+    /**
+     * Contravariant return types allow implementors to specify a supertype of that which is specified in the prototype
+     * Usually this isn't a good idea, it's not type-safe, do not use unless you understand what you are doing!
+     */
+    const RETURN_CONTRAVARIANT = 0b00000100;
+
+    /**
+     * Covariant return types allow implementors to specify a subtype of that which is specified in the prototype
+     */
+    const RETURN_COVARIANT     = 0b00001000;
+
+    /**
+     * Strict mode validates types using the same rules are strict_types=1
+     */
+    const STRICT               = 0b00010000;
+
+    /**
+     * The default flags allow strictly type-safe variance
+     */
+    const DEFAULT_FLAGS = self::PARAMS_CONTRAVARIANT | self::RETURN_COVARIANT | self::STRICT;
 
     /**
      * @var ReturnType
@@ -24,8 +47,14 @@ final class CallbackType
     private $parameters;
 
     /**
+     * Given a callable, create the appropriate reflection
+     *
+     * This will accept things the PHP would fail to invoke due to scoping, but we can reflect them anyway. Do not add
+     * a callable type-hint or this behaviour will break!
+     *
      * @param callable $callback
      * @return \ReflectionFunction|\ReflectionMethod
+     * @throws \ReflectionException
      */
     private static function reflectCallable($callback)
     {
@@ -60,8 +89,9 @@ final class CallbackType
      * @param callable $callable
      * @param int $flags
      * @return CallbackType
+     * @throws InvalidCallbackTypeException
      */
-    public static function createFromCallable($callable, $flags = self::PARAMS_CONTRAVARIANT | self::RETURN_COVARIANT | self::STRICT)
+    public static function createFromCallable($callable, $flags = self::DEFAULT_FLAGS)
     {
         try {
             $reflection = self::reflectCallable($callable);

@@ -670,12 +670,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "f67121497ee8dbae74a463b141772c2b52ac7e95"
+                "reference": "f96c9da1627a760295e5424515fece5c66c280c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f67121497ee8dbae74a463b141772c2b52ac7e95",
-                "reference": "f67121497ee8dbae74a463b141772c2b52ac7e95",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f96c9da1627a760295e5424515fece5c66c280c2",
+                "reference": "f96c9da1627a760295e5424515fece5c66c280c2",
                 "shasum": ""
             },
             "require": {
@@ -745,7 +745,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-03-21 13:28:39"
+            "time": "2017-03-28 06:55:29"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

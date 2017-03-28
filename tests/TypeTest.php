@@ -2,6 +2,7 @@
 
 namespace DaveRandom\CallbackValidator\Test;
 
+use DaveRandom\CallbackValidator\BuiltInTypes;
 use DaveRandom\CallbackValidator\Type;
 use PHPUnit\Framework\TestCase;
 
@@ -49,7 +50,7 @@ class TypeTest extends TestCase
             }
         };
 
-        $this->assertSame(Type::TYPE_STRING, $type->name);
+        $this->assertSame(BuiltInTypes::STRING, $type->name);
         $this->assertFalse((bool)($type->flags & Type::FLAG_NULLABLE));
         $this->assertTrue((bool)($type->flags & Type::FLAG_BUILTIN));
         $this->assertFalse((bool)($type->flags & Type::FLAG_REFERENCE));
@@ -81,7 +82,7 @@ class TypeTest extends TestCase
             }
         };
 
-        $this->assertSame(Type::TYPE_STRING, $type->name);
+        $this->assertSame(BuiltInTypes::STRING, $type->name);
         $this->assertTrue((bool)($type->flags & Type::FLAG_NULLABLE));
         $this->assertTrue((bool)($type->flags & Type::FLAG_BUILTIN));
         $this->assertFalse((bool)($type->flags & Type::FLAG_REFERENCE));

@@ -45,6 +45,51 @@ final class ParameterType extends Type
         $this->paramName = $paramName;
     }
 
+
+    /**
+     * @param \ReflectionType|null $candidateType
+     * @param bool $candidateReturnsReference
+     * @return bool
+     */
+    public function isSatisfiedBya($candidateType, $candidateReturnsReference)
+    {
+        // By-ref must always be the same
+        if ($candidateReturnsReference xor ($this->flags & self::FLAG_REFERENCE)) {
+            return false;
+        }
+
+        if ($candidateType !== null) {
+            $candidateTypeName = (string)$candidateType;
+            $candidateTypeNullable = $candidateType->allowsNull();
+        } else {
+            $candidateTypeName = null;
+            $candidateTypeNullable = false;
+        }
+
+        $nullable = (bool)($this->flags & self::FLAG_NULLABLE);
+
+        // Candidate is exact match to prototype
+        if ($candidateTypeName === $this->name && $candidateTypeNullable === $nullable) {
+            return true;
+        }
+
+        $strict = (bool)($this->flags & CallbackType::STRICT);
+
+        // Test for a covariant match
+        if ($this->flags & CallbackType::RETURN_COVARIANT
+            && MatchTester::isVariantMatch($this->name, $nullable, $candidateTypeName, $candidateTypeNullable, $strict)) {
+            return true;
+        }
+
+        // Test for a contravariant match
+        if ($this->flags & CallbackType::RETURN_CONTRAVARIANT
+            && MatchTester::isVariantMatch($candidateTypeName, $candidateTypeNullable, $this->name, $nullable, $strict)) {
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * @param \ReflectionParameter $candidate
      * @return bool
@@ -56,30 +101,37 @@ final class ParameterType extends Type
             return false;
         }
 
-        // If the candidate has no type, it will satisfy any requirement of the prototype
-        if (!$candidate->hasType()) {
+        if ($candidate->hasType()) {
+            $candidateType = $candidate->getType();
+            $candidateTypeName = (string)$candidateType;
+            $candidateTypeNullable = $candidateType->allowsNull();
+        } else {
+            $candidateTypeName = null;
+            $candidateTypeNullable = false;
+        }
+
+        $nullable = (bool)($this->flags & self::FLAG_NULLABLE);
+
+        // Candidate is exact match to prototype
+        if ($candidateTypeName === $this->name && $candidateTypeNullable === $nullable) {
             return true;
         }
 
-        $candidateType = $candidate->getType();
+        $strict = (bool)($this->flags & CallbackType::STRICT);
 
-        // If the prototype is nullable, the candidate must be as well
-        if (($this->flags & self::FLAG_NULLABLE) && !$candidateType->allowsNull()) {
-            return false;
-        }
-
-        // If the string is an exact match it's definitely a match
-        if ($this->name === (string)$candidateType) {
+        // Test for a contravariant match
+        if ($this->flags & CallbackType::PARAMS_CONTRAVARIANT
+            && MatchTester::isVariantMatch($candidateTypeName, $candidateTypeNullable, $this->name, $nullable, $strict)) {
             return true;
         }
 
-        // If a string match didn't pass, built-ins are not possible
-        if (($this->flags & self::FLAG_BUILTIN) || $candidateType->isBuiltin()) {
-            return false;
+        // Test for a covariant match
+        if ($this->flags & CallbackType::PARAMS_COVARIANT
+            && MatchTester::isVariantMatch($this->name, $nullable, $candidateTypeName, $candidateTypeNullable, $strict)) {
+            return true;
         }
 
-        // Parameter types are contravariant
-        return \is_subclass_of($this->name, (string)$candidateType);
+        return false;
     }
 
     /**
