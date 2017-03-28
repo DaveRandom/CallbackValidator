@@ -120,7 +120,6 @@ class MatchTesterTest extends TestCase
 
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::ARRAY));
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::CALLABLE));
-        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::VOID));
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::ITERABLE));
 
         $this->assertFalse(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::CALLABLE));
@@ -131,6 +130,7 @@ class MatchTesterTest extends TestCase
     {
         $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ARRAY, BuiltInTypes::ARRAY));
         $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::CALLABLE));
+        $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::VOID, BuiltInTypes::VOID));
         $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::ARRAY));
         $this->assertTrue(MatchTester::satisfiesBuiltInTypeInWeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::ITERABLE));
     }
