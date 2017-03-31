@@ -25,7 +25,7 @@ $tests = [
     function ($a, $b, $c): ?string {}, // true - arguments are contravariant
     function (A $a, B $b): ?string {}, // true - extra args don't cause errors
     function (C $a, B $b, $c): ?string {}, // true if C is a supertype of A, false otherwise
-    function (A $a, B $b, $c): string {}, // true, return types are convariant
+    function (A $a, B $b, $c): string {}, // true, return types are covariant
 ];
 
 foreach ($tests as $test) {
@@ -42,4 +42,3 @@ foreach ($tests as $test) {
 
 - Lots more tests
 - Explain (text explanation of why callback does not validate)
-- Check PHP 7.0 support
