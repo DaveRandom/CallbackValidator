@@ -3,6 +3,12 @@ Callback Validator
 
 Validates callback signatures against a prototype.
 
+## Status
+
+[![Build Status](https://travis-ci.org/DaveRandom/CallbackValidator.svg?branch=master)](https://travis-ci.org/DaveRandom/CallbackValidator)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/DaveRandom/CallbackValidator/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/DaveRandom/CallbackValidator/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/DaveRandom/CallbackValidator/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/DaveRandom/CallbackValidator/?branch=master)
+
 ## Usage
 
 ```php
@@ -34,6 +40,6 @@ foreach ($tests as $test) {
 
 ## TODO
 
-- Tests
+- Lots more tests
 - Explain (text explanation of why callback does not validate)
 - Check PHP 7.0 support
