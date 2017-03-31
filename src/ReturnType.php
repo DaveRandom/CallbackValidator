@@ -5,61 +5,50 @@ namespace DaveRandom\CallbackValidator;
 final class ReturnType extends Type
 {
     /**
+     * Contravariant return types allow implementors to specify a supertype of that which is specified in the prototype
+     * Usually this isn't a good idea, it's not type-safe, do not use unless you understand what you are doing!
+     */
+    const CONTRAVARIANT = 0x01 << 16;
+
+    /**
+     * Covariant return types allow implementors to specify a subtype of that which is specified in the prototype
+     */
+    const COVARIANT = 0x02 << 16;
+
+    /**
      * @param \ReflectionFunctionAbstract $reflection
      * @param int $flags
      * @return ReturnType
      */
-    public static function createFromReflectionFunctionAbstract($reflection, $flags)
+    public static function createFromReflectionFunctionAbstract($reflection, $flags = 0)
     {
-        return new self(
-            $reflection->getReturnType(),
-            $flags | ($reflection->returnsReference() ? self::FLAG_REFERENCE : 0)
-        );
+        if ($reflection->returnsReference()) {
+            $flags |= Type::REFERENCE;
+        }
+
+        $typeName = null;
+        $typeReflection = $reflection->getReturnType();
+
+        if ($typeReflection !== null) {
+            $typeName = (string)$typeReflection;
+
+            if ($typeReflection->allowsNull()) {
+                $flags |= Type::NULLABLE;
+            }
+        }
+
+        return new ReturnType($typeName, $flags);
     }
 
     /**
-     * @param \ReflectionType|null $candidateType
-     * @param bool $candidateReturnsReference
-     * @return bool
+     * @param string|null $typeName
+     * @param int $flags
      */
-    public function isSatisfiedBy($candidateType, $candidateReturnsReference)
+    public function __construct($typeName, $flags)
     {
-        // By-ref must always be the same
-        if ($candidateReturnsReference xor ($this->flags & self::FLAG_REFERENCE)) {
-            return false;
-        }
+        $flags = (int)$flags;
 
-        if ($candidateType !== null) {
-            $candidateTypeName = (string)$candidateType;
-            $candidateTypeNullable = $candidateType->allowsNull();
-        } else {
-            $candidateTypeName = null;
-            $candidateTypeNullable = false;
-        }
-
-        $nullable = (bool)($this->flags & self::FLAG_NULLABLE);
-
-        // Candidate is exact match to prototype
-        if ($candidateTypeName === $this->name && $candidateTypeNullable === $nullable) {
-            return true;
-        }
-
-        $strict = (bool)($this->flags & CallbackType::STRICT);
-
-        // Test for a covariant match
-        if ($this->flags & CallbackType::RETURN_COVARIANT
-            && MatchTester::isVariantMatch($this->name, $nullable, $candidateTypeName, $candidateTypeNullable, $strict)) {
-            return true;
-        }
-
-        // Test for a contravariant match
-        if ($this->flags & CallbackType::RETURN_CONTRAVARIANT
-            && MatchTester::isVariantMatch($candidateTypeName, $candidateTypeNullable, $this->name, $nullable, $strict)) {
-            return true;
-        }
-
-        // No match
-        return false;
+        parent::__construct($typeName, $flags, $flags & self::COVARIANT, $flags & self::CONTRAVARIANT);
     }
 
     /**
@@ -67,8 +56,8 @@ final class ReturnType extends Type
      */
     public function __toString()
     {
-        return ($this->flags & self::FLAG_NULLABLE)
-            ? '?' . $this->name
-            : $this->name;
+        return $this->isNullable
+            ? '?' . $this->typeName
+            : $this->typeName;
     }
 }

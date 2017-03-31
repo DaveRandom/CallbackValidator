@@ -4,40 +4,114 @@ namespace DaveRandom\CallbackValidator;
 
 abstract class Type
 {
-    const FLAG_BUILTIN   = 0b00000001 << 8;
-    const FLAG_NULLABLE  = 0b00000010 << 8;
-    const FLAG_REFERENCE = 0b00000100 << 8;
+    /**
+     * Weak mode validates types using the same rules are strict_types=0
+     */
+    const WEAK = 0x01;
 
     /**
+     * Nullable types are either explicitly ?type (PHP>=7.1) or with a default value of null
+     */
+    const NULLABLE  = 0x02;
+
+    /**
+     * Reference types must always match
+     */
+    const REFERENCE = 0x04;
+
+    /**
+     * The name of the type
+     *
      * @var string|null
      */
-    public $name;
+    public $typeName;
 
     /**
-     * @var int
+     * Whether the type is nullable
+     *
+     * @var bool
      */
-    public $flags;
+    public $isNullable;
 
     /**
-     * @param \ReflectionType|null $type
-     * @param int $additionalFlags
+     * Whether the type is passed by reference
+     *
+     * @var bool
      */
-    protected function __construct($type, $additionalFlags)
+    public $isByReference;
+
+    /**
+     * Whether the type should be matched in weak mode
+     *
+     * @var bool
+     */
+    public $isWeak;
+
+    /**
+     * Whether the type allows covariant matches
+     *
+     * @var bool
+     */
+    public $allowsCovariance;
+
+    /**
+     * Whether the type allows contravariant matches
+     *
+     * @var bool
+     */
+    public $allowsContravariance;
+
+    /**
+     * @param string|null $typeName
+     * @param int $flags
+     * @param bool $allowsCovariance
+     * @param bool $allowsContravariance
+     */
+    protected function __construct($typeName, $flags, $allowsCovariance, $allowsContravariance)
     {
-        $this->flags = $additionalFlags;
+        $this->typeName = $typeName !== null
+            ? (string)$typeName
+            : null;
 
-        if ($type === null) {
-            return;
+        $this->isNullable = (bool)($flags & self::NULLABLE);
+        $this->isByReference = (bool)($flags & self::REFERENCE);
+        $this->isWeak = (bool)($flags & self::WEAK);
+        $this->allowsCovariance = (bool)$allowsCovariance;
+        $this->allowsContravariance = (bool)$allowsContravariance;
+    }
+
+    /**
+     * Whether the type will be satisfied by the specified type name, nullability and by-reference combination
+     *
+     * @param string|null $typeName
+     * @param bool $nullable
+     * @param bool $byReference
+     * @return bool
+     */
+    public function isSatisfiedBy($typeName, $nullable, $byReference)
+    {
+        // By-ref must always be the same
+        if ($byReference xor $this->isByReference) {
+            return false;
         }
 
-        if ($type->isBuiltin()) {
-            $this->flags |= self::FLAG_BUILTIN;
+        // Candidate is exact match to prototype
+        if ($typeName === $this->typeName && $nullable === $this->isNullable) {
+            return true;
         }
 
-        if ($type->allowsNull()) {
-            $this->flags |= self::FLAG_NULLABLE;
+        // Test for a covariant match
+        if ($this->allowsCovariance
+            && MatchTester::isMatch($this->typeName, $this->isNullable, $typeName, $nullable, $this->isWeak)) {
+            return true;
         }
 
-        $this->name = (string)$type;
+        // Test for a contravariant match
+        if ($this->allowsContravariance
+            && MatchTester::isMatch($typeName, $nullable, $this->typeName, $this->isNullable, $this->isWeak)) {
+            return true;
+        }
+
+        return false;
     }
 }

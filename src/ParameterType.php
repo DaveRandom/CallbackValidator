@@ -4,134 +4,99 @@ namespace DaveRandom\CallbackValidator;
 
 final class ParameterType extends Type
 {
-    const FLAG_VARIADIC  = 0b00000001 << 16;
-    const FLAG_OPTIONAL  = 0b00000010 << 16;
+    /**
+     * Contravariant parameters allow implementors to specify a supertype of that which is specified in the prototype
+     */
+    const CONTRAVARIANT = 0x01 << 8;
 
     /**
+     * Covariant parameters allow implementors to specify a subtype of that which is specified in the prototype
+     * Usually this isn't a good idea, it's not type-safe, do not use unless you understand what you are doing!
+     */
+    const COVARIANT = 0x02 << 8;
+
+    /**
+     * A variadic parameter accepts zero or more arguments of the specified type
+     */
+    const VARIADIC = 0x04 << 8;
+
+    /**
+     * An optional parameter may be omitted at call time
+     */
+    const OPTIONAL = 0x08 << 8;
+
+    /**
+     * The name of the parameter in the prototype
+     *
      * @var string
      */
-    private $paramName;
+    private $parameterName;
 
     /**
-     * @param \ReflectionParameter $parameter
-     * @param $flags
+     * Whether the parameter accepts multiple values
+     *
+     * @var bool
+     */
+    public $isVariadic;
+
+    /**
+     * Whether the parameter value can be omitted at call time#
+     *
+     * @var
+     */
+    public $isOptional;
+
+    /**
+     * Create a new ParameterType instance from a \ReflectionParameter instance
+     *
+     * @param \ReflectionParameter $reflection
+     * @param int $flags
      * @return ParameterType
      */
-    public static function createFromReflectionParameter($parameter, $flags)
+    public static function createFromReflectionParameter($reflection, $flags = 0)
     {
-        if ($parameter->isVariadic()) {
-            $flags |= self::FLAG_VARIADIC;
+        $parameterName = $reflection->getName();
+
+        if ($reflection->isPassedByReference()) {
+            $flags |= Type::REFERENCE;
         }
 
-        if ($parameter->isPassedByReference()) {
-            $flags |= self::FLAG_REFERENCE;
+        if ($reflection->isVariadic()) {
+            $flags |= ParameterType::VARIADIC;
         }
 
-        if ($parameter->isOptional()) {
-            $flags |= self::FLAG_OPTIONAL;
+        if ($reflection->isOptional()) {
+            $flags |= ParameterType::OPTIONAL;
         }
 
-        return new self($parameter->getName(), $parameter->getType(), $flags);
+        $typeName = null;
+        $typeReflection = $reflection->getType();
+
+        if ($typeReflection !== null) {
+            $typeName = (string)$typeReflection;
+
+            if ($typeReflection->allowsNull()) {
+                $flags |= Type::NULLABLE;
+            }
+        }
+
+        return new ParameterType($parameterName, $typeName, $flags);
     }
 
     /**
-     * @param string $paramName
-     * @param \ReflectionType|null $type
-     * @param int $additionalFlags
+     * @param string $parameterName
+     * @param string|null $typeName
+     * @param int $flags
      */
-    protected function __construct($paramName, $type, $additionalFlags)
+    public function __construct($parameterName, $typeName, $flags)
     {
-        parent::__construct($type, $additionalFlags);
-        $this->paramName = $paramName;
-    }
+        $flags = (int)$flags;
 
+        parent::__construct($typeName, $flags, $flags & self::COVARIANT, $flags & self::CONTRAVARIANT);
 
-    /**
-     * @param \ReflectionType|null $candidateType
-     * @param bool $candidateReturnsReference
-     * @return bool
-     */
-    public function isSatisfiedBya($candidateType, $candidateReturnsReference)
-    {
-        // By-ref must always be the same
-        if ($candidateReturnsReference xor ($this->flags & self::FLAG_REFERENCE)) {
-            return false;
-        }
-
-        if ($candidateType !== null) {
-            $candidateTypeName = (string)$candidateType;
-            $candidateTypeNullable = $candidateType->allowsNull();
-        } else {
-            $candidateTypeName = null;
-            $candidateTypeNullable = false;
-        }
-
-        $nullable = (bool)($this->flags & self::FLAG_NULLABLE);
-
-        // Candidate is exact match to prototype
-        if ($candidateTypeName === $this->name && $candidateTypeNullable === $nullable) {
-            return true;
-        }
-
-        $strict = (bool)($this->flags & CallbackType::STRICT);
-
-        // Test for a covariant match
-        if ($this->flags & CallbackType::RETURN_COVARIANT
-            && MatchTester::isVariantMatch($this->name, $nullable, $candidateTypeName, $candidateTypeNullable, $strict)) {
-            return true;
-        }
-
-        // Test for a contravariant match
-        if ($this->flags & CallbackType::RETURN_CONTRAVARIANT
-            && MatchTester::isVariantMatch($candidateTypeName, $candidateTypeNullable, $this->name, $nullable, $strict)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param \ReflectionParameter $candidate
-     * @return bool
-     */
-    public function isSatisfiedBy($candidate)
-    {
-        // By-ref must always be the same
-        if ($candidate->isPassedByReference() xor ($this->flags & self::FLAG_REFERENCE)) {
-            return false;
-        }
-
-        if ($candidate->hasType()) {
-            $candidateType = $candidate->getType();
-            $candidateTypeName = (string)$candidateType;
-            $candidateTypeNullable = $candidateType->allowsNull();
-        } else {
-            $candidateTypeName = null;
-            $candidateTypeNullable = false;
-        }
-
-        $nullable = (bool)($this->flags & self::FLAG_NULLABLE);
-
-        // Candidate is exact match to prototype
-        if ($candidateTypeName === $this->name && $candidateTypeNullable === $nullable) {
-            return true;
-        }
-
-        $strict = (bool)($this->flags & CallbackType::STRICT);
-
-        // Test for a contravariant match
-        if ($this->flags & CallbackType::PARAMS_CONTRAVARIANT
-            && MatchTester::isVariantMatch($candidateTypeName, $candidateTypeNullable, $this->name, $nullable, $strict)) {
-            return true;
-        }
-
-        // Test for a covariant match
-        if ($this->flags & CallbackType::PARAMS_COVARIANT
-            && MatchTester::isVariantMatch($this->name, $nullable, $candidateTypeName, $candidateTypeNullable, $strict)) {
-            return true;
-        }
-
-        return false;
+        $this->parameterName = (string)$parameterName;
+        $this->isOptional = (bool)($flags & self::OPTIONAL);
+        $this->isVariadic = (bool)($flags & self::VARIADIC);
     }
 
     /**
@@ -141,22 +106,22 @@ final class ParameterType extends Type
     {
         $string = '';
 
-        if ($this->name !== null) {
-            if ($this->flags & self::FLAG_NULLABLE) {
+        if ($this->typeName !== null) {
+            if ($this->isNullable) {
                 $string .= '?';
             }
 
-            $string .= $this->name . ' ';
+            $string .= $this->typeName . ' ';
         }
 
-        if ($this->flags & self::FLAG_REFERENCE) {
+        if ($this->isByReference) {
             $string .= '&';
         }
 
-        if ($this->flags & self::FLAG_VARIADIC) {
+        if ($this->isVariadic) {
             $string .= '...';
         }
 
-        return $string . '$' . $this->paramName;
+        return $string . '$' . $this->parameterName;
     }
 }

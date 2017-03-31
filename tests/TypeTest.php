@@ -2,105 +2,125 @@
 
 namespace DaveRandom\CallbackValidator\Test;
 
-use DaveRandom\CallbackValidator\BuiltInTypes;
 use DaveRandom\CallbackValidator\Type;
 use PHPUnit\Framework\TestCase;
 
 class TypeTest extends TestCase
 {
+    private function createTypeInstance($type, $flags, $allowsCovariance, $allowsContravariance): Type
+    {
+        return new class($type, $flags, $allowsCovariance, $allowsContravariance) extends Type {
+            public function __construct($type, $flags, $allowsCovariance, $allowsContravariance) {
+                parent::__construct($type, $flags, $allowsCovariance, $allowsContravariance);
+            }
+        };
+    }
+
     public function testNullType()
     {
-        /** @var Type $type */
-        $type = new class extends Type {
-            public $flags;
-            public function __construct() {
-                parent::__construct(null, 0);
-            }
-        };
+        $type = $this->createTypeInstance(null, 0, false, false);
 
-        $this->assertSame(null, $type->name);
-        $this->assertFalse((bool)($type->flags & Type::FLAG_NULLABLE));
-        $this->assertFalse((bool)($type->flags & Type::FLAG_BUILTIN));
-        $this->assertFalse((bool)($type->flags & Type::FLAG_REFERENCE));
+        $this->assertSame(null, $type->typeName);
+        $this->assertFalse($type->isNullable);
+        $this->assertFalse($type->isByReference);
+        $this->assertFalse($type->isWeak);
+        $this->assertFalse($type->allowsCovariance);
+        $this->assertFalse($type->allowsContravariance);
     }
 
-    public function testAdditionalFlags()
+    public function testNullableFlag()
     {
-        /** @var Type $type */
-        $type = new class extends Type {
-            public $flags;
-            public function __construct() {
-                parent::__construct(null, Type::FLAG_REFERENCE);
-            }
-        };
+        $type = $this->createTypeInstance(null, Type::NULLABLE, false, false);
 
-        $this->assertSame(null, $type->name);
-        $this->assertFalse((bool)($type->flags & Type::FLAG_NULLABLE));
-        $this->assertFalse((bool)($type->flags & Type::FLAG_BUILTIN));
-        $this->assertTrue((bool)($type->flags & Type::FLAG_REFERENCE));
+        $this->assertSame(null, $type->typeName);
+        $this->assertTrue($type->isNullable);
+        $this->assertFalse($type->isByReference);
+        $this->assertFalse($type->isWeak);
+        $this->assertFalse($type->allowsCovariance);
+        $this->assertFalse($type->allowsContravariance);
     }
 
-    public function testBuiltInType()
+    public function testReferenceFlag()
     {
-        /** @var Type $type */
-        $type = new class extends Type {
-            public function method(string $arg) {}
-            public function __construct() {
-                parent::__construct((new \ReflectionMethod($this, 'method'))->getParameters()[0]->getType(), 0);
-            }
-        };
+        $type = $this->createTypeInstance(null, Type::REFERENCE, false, false);
 
-        $this->assertSame(BuiltInTypes::STRING, $type->name);
-        $this->assertFalse((bool)($type->flags & Type::FLAG_NULLABLE));
-        $this->assertTrue((bool)($type->flags & Type::FLAG_BUILTIN));
-        $this->assertFalse((bool)($type->flags & Type::FLAG_REFERENCE));
+        $this->assertSame(null, $type->typeName);
+        $this->assertFalse($type->isNullable);
+        $this->assertTrue($type->isByReference);
+        $this->assertFalse($type->isWeak);
+        $this->assertFalse($type->allowsCovariance);
+        $this->assertFalse($type->allowsContravariance);
     }
 
-    public function testClassType()
+    public function testWeakFlag()
     {
-        /** @var Type $type */
-        $type = new class extends Type {
-            public function method(Type $arg) {}
-            public function __construct() {
-                parent::__construct((new \ReflectionMethod($this, 'method'))->getParameters()[0]->getType(), 0);
-            }
-        };
+        $type = $this->createTypeInstance(null, Type::WEAK, false, false);
 
-        $this->assertSame(Type::class, $type->name);
-        $this->assertFalse((bool)($type->flags & Type::FLAG_NULLABLE));
-        $this->assertFalse((bool)($type->flags & Type::FLAG_BUILTIN));
-        $this->assertFalse((bool)($type->flags & Type::FLAG_REFERENCE));
+        $this->assertSame(null, $type->typeName);
+        $this->assertFalse($type->isNullable);
+        $this->assertFalse($type->isByReference);
+        $this->assertTrue($type->isWeak);
+        $this->assertFalse($type->allowsCovariance);
+        $this->assertFalse($type->allowsContravariance);
     }
 
-    public function testNullableBuiltInType()
+    public function testMultipleFlags()
     {
-        /** @var Type $type */
-        $type = new class extends Type {
-            public function method(string $arg = null) {}
-            public function __construct() {
-                parent::__construct((new \ReflectionMethod($this, 'method'))->getParameters()[0]->getType(), 0);
-            }
-        };
+        $type = $this->createTypeInstance(null, Type::NULLABLE | Type::REFERENCE | Type::WEAK, false, false);
 
-        $this->assertSame(BuiltInTypes::STRING, $type->name);
-        $this->assertTrue((bool)($type->flags & Type::FLAG_NULLABLE));
-        $this->assertTrue((bool)($type->flags & Type::FLAG_BUILTIN));
-        $this->assertFalse((bool)($type->flags & Type::FLAG_REFERENCE));
+        $this->assertSame(null, $type->typeName);
+        $this->assertTrue($type->isNullable);
+        $this->assertTrue($type->isByReference);
+        $this->assertTrue($type->isWeak);
+        $this->assertFalse($type->allowsCovariance);
+        $this->assertFalse($type->allowsContravariance);
     }
 
-    public function testNullableClassType()
+    public function testAllowsCovarianceArg()
     {
-        /** @var Type $type */
-        $type = new class extends Type {
-            public function method(Type $arg = null) {}
-            public function __construct() {
-                parent::__construct((new \ReflectionMethod($this, 'method'))->getParameters()[0]->getType(), 0);
-            }
-        };
+        $type = $this->createTypeInstance(null, 0, true, false);
 
-        $this->assertSame(Type::class, $type->name);
-        $this->assertTrue((bool)($type->flags & Type::FLAG_NULLABLE));
-        $this->assertFalse((bool)($type->flags & Type::FLAG_BUILTIN));
-        $this->assertFalse((bool)($type->flags & Type::FLAG_REFERENCE));
+        $this->assertSame(null, $type->typeName);
+        $this->assertFalse($type->isNullable);
+        $this->assertFalse($type->isByReference);
+        $this->assertFalse($type->isWeak);
+        $this->assertTrue($type->allowsCovariance);
+        $this->assertFalse($type->allowsContravariance);
+    }
+
+    public function testAllowsContravarianceArg()
+    {
+        $type = $this->createTypeInstance(null, 0, false, true);
+
+        $this->assertSame(null, $type->typeName);
+        $this->assertFalse($type->isNullable);
+        $this->assertFalse($type->isByReference);
+        $this->assertFalse($type->isWeak);
+        $this->assertFalse($type->allowsCovariance);
+        $this->assertTrue($type->allowsContravariance);
+    }
+
+    public function testStringTypeName()
+    {
+        $type = $this->createTypeInstance(Type::class, 0, false, false);
+
+        $this->assertSame(Type::class, $type->typeName);
+        $this->assertFalse($type->isNullable);
+        $this->assertFalse($type->isByReference);
+        $this->assertFalse($type->isWeak);
+        $this->assertFalse($type->allowsCovariance);
+        $this->assertFalse($type->allowsContravariance);
+    }
+
+    public function testNonStringTypeName()
+    {
+        $type = $this->createTypeInstance(1, 0, false, false);
+
+        $this->assertSame('1', $type->typeName);
+        $this->assertFalse($type->isNullable);
+        $this->assertFalse($type->isByReference);
+        $this->assertFalse($type->isWeak);
+        $this->assertFalse($type->allowsCovariance);
+        $this->assertFalse($type->allowsContravariance);
     }
 }

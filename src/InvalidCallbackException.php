@@ -2,4 +2,4 @@
 
 namespace DaveRandom\CallbackValidator;
 
-class InvalidCallbackTypeException extends \LogicException {}
+class InvalidCallbackException extends \LogicException {}

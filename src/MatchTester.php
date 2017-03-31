@@ -34,91 +34,14 @@ final class MatchTester
     ];
 
     /**
-     * @param string $inputType
-     * @return bool
-     */
-    private static function satisfiesIterable($inputType)
-    {
-        return $inputType === BuiltInTypes::ITERABLE
-            || $inputType === BuiltInTypes::ARRAY
-            || $inputType === \Traversable::class
-            || \is_subclass_of($inputType, \Traversable::class);
-    }
-
-    /**
-     * @param string $inputType
-     * @return bool
-     */
-    private static function satisfiesCallable($inputType)
-    {
-        return $inputType === BuiltInTypes::CALLABLE
-            || $inputType === \Closure::class
-            || \method_exists($inputType, '__invoke')
-            || \is_subclass_of($inputType, \Closure::class);
-    }
-
-    private static function isScalarCastable($targetType, $inputType)
-    {
-        // Nothing else casts to array, callable, void or iterable
-        if (!isset(self::$scalarTypes[$targetType])) {
-            return false;
-        }
-
-        // Scalars can all cast to each other
-        if (isset(self::$scalarTypes[$inputType])) {
-            return true;
-        }
-
-        // Classes with __toString() satisfy string
-        if ($targetType === BuiltInTypes::STRING && \method_exists($inputType, '__toString')) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string $inputType
-     * @param string $targetType
-     * @return bool
-     */
-    public static function satisfiesBuiltInTypeInWeakMode($targetType, $inputType)
-    {
-        $inputType = (string)$inputType;
-        $targetType = (string)$targetType;
-
-        // Target must be built in
-        if (!isset(self::$builtInTypes[$targetType])) {
-            return false;
-        }
-
-        // Exact string match is always acceptable
-        if ($inputType === $targetType) {
-            return true;
-        }
-
-        // Check iterable
-        if ($targetType === BuiltInTypes::ITERABLE) {
-            return self::satisfiesIterable($inputType);
-        }
-
-        // Check callable
-        if ($targetType === BuiltInTypes::CALLABLE) {
-            return self::satisfiesCallable($inputType);
-        }
-
-        return self::isScalarCastable($targetType, $inputType);
-    }
-
-    /**
      * @param string|null $superTypeName
      * @param bool $superTypeNullable
      * @param string|null $subTypeName
      * @param bool $subTypeNullable
-     * @param bool $strict
+     * @param bool $weak
      * @return bool
      */
-    public static function isVariantMatch($superTypeName, $superTypeNullable, $subTypeName, $subTypeNullable, $strict)
+    public static function isMatch($superTypeName, $superTypeNullable, $subTypeName, $subTypeNullable, $weak)
     {
         // If the super type is unspecified, anything is a match
         if ($superTypeName === null) {
@@ -145,24 +68,48 @@ final class MatchTester
 
         // Check iterable
         if ($superTypeName === BuiltInTypes::ITERABLE) {
-            return self::satisfiesIterable($subTypeName);
+            return $subTypeName === BuiltInTypes::ARRAY
+                || $subTypeName === \Traversable::class
+                || \is_subclass_of($subTypeName, \Traversable::class);
         }
 
         // Check callable
         if ($superTypeName === BuiltInTypes::CALLABLE) {
-            return self::satisfiesCallable($subTypeName);
+            return $subTypeName === \Closure::class
+                || \method_exists($subTypeName, '__invoke')
+                || \is_subclass_of($subTypeName, \Closure::class);
         }
 
-        // If the super type is built-in, check whether casting rules can succeed, or fail immediately in strict mode
+        // If the super type is built-in, check whether casting rules can succeed
         if (isset(self::$builtInTypes[$superTypeName])) {
-            return !$strict
-                ? self::isScalarCastable($superTypeName, $subTypeName)
-                : false;
+            // Fail immediately in strict mode
+            if (!$weak) {
+                return false;
+            }
+
+            // Nothing else satisfies array, callable, void or iterable
+            if (!isset(self::$scalarTypes[$superTypeName])) {
+                return false;
+            }
+
+            // Scalars can all cast to each other
+            if (isset(self::$scalarTypes[$subTypeName])) {
+                return true;
+            }
+
+            // Classes with __toString() satisfy string
+            if ($superTypeName === BuiltInTypes::STRING && \method_exists($subTypeName, '__toString')) {
+                return true;
+            }
+
+            return false;
         }
 
-        // We now know the super type is not built-in and there's no string match, so only a subclass can satisfy
-        return !isset(self::$builtInTypes[$subTypeName])
-            ? \is_subclass_of($subTypeName, $superTypeName)
-            : false;
+        // We now know the super type is not built-in and there's no string match, sub type must not be built-in
+        if (isset(self::$builtInTypes[$subTypeName])) {
+            return false;
+        }
+
+        return \is_subclass_of($subTypeName, $superTypeName);
     }
 }
