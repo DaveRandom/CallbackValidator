@@ -58,15 +58,15 @@ final class ParameterType extends Type
         $parameterName = $reflection->getName();
 
         if ($reflection->isPassedByReference()) {
-            $flags |= Type::REFERENCE;
+            $flags |= self::REFERENCE;
         }
 
         if ($reflection->isVariadic()) {
-            $flags |= ParameterType::VARIADIC;
+            $flags |= self::VARIADIC;
         }
 
         if ($reflection->isOptional()) {
-            $flags |= ParameterType::OPTIONAL;
+            $flags |= self::OPTIONAL;
         }
 
         $typeName = null;
@@ -76,11 +76,11 @@ final class ParameterType extends Type
             $typeName = (string)$typeReflection;
 
             if ($typeReflection->allowsNull()) {
-                $flags |= Type::NULLABLE;
+                $flags |= self::NULLABLE;
             }
         }
 
-        return new ParameterType($parameterName, $typeName, $flags);
+        return new self($parameterName, $typeName, $flags);
     }
 
     /**

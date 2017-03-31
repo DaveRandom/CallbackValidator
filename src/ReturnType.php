@@ -23,7 +23,7 @@ final class ReturnType extends Type
     public static function createFromReflectionFunctionAbstract($reflection, $flags = 0)
     {
         if ($reflection->returnsReference()) {
-            $flags |= Type::REFERENCE;
+            $flags |= self::REFERENCE;
         }
 
         $typeName = null;
@@ -33,11 +33,11 @@ final class ReturnType extends Type
             $typeName = (string)$typeReflection;
 
             if ($typeReflection->allowsNull()) {
-                $flags |= Type::NULLABLE;
+                $flags |= self::NULLABLE;
             }
         }
 
-        return new ReturnType($typeName, $flags);
+        return new self($typeName, $flags);
     }
 
     /**
