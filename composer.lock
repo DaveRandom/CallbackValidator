@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "22bf6e9b4361b62faec60875cc241211",
-    "content-hash": "b2d37451364e9b05846673a55fd2d344",
+    "hash": "18c63c10fc5c838a467859b0447d0107",
+    "content-hash": "0e9e28039a829626faa914ca73ef8b7f",
     "packages": [],
     "packages-dev": [
         {
@@ -421,12 +421,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "2b4d8b98edf5f5f0c90eb771ac993d4dbae5e0a9"
+                "reference": "7b69b0c75afe601047bae69e9065ef154ffce111"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/2b4d8b98edf5f5f0c90eb771ac993d4dbae5e0a9",
-                "reference": "2b4d8b98edf5f5f0c90eb771ac993d4dbae5e0a9",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/7b69b0c75afe601047bae69e9065ef154ffce111",
+                "reference": "7b69b0c75afe601047bae69e9065ef154ffce111",
                 "shasum": ""
             },
             "require": {
@@ -476,7 +476,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-03-07 10:03:56"
+            "time": "2017-03-31 13:21:26"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -670,12 +670,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "f96c9da1627a760295e5424515fece5c66c280c2"
+                "reference": "bf00f6f0dd1c379c082dd4fab27de475dbcb7bff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f96c9da1627a760295e5424515fece5c66c280c2",
-                "reference": "f96c9da1627a760295e5424515fece5c66c280c2",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/bf00f6f0dd1c379c082dd4fab27de475dbcb7bff",
+                "reference": "bf00f6f0dd1c379c082dd4fab27de475dbcb7bff",
                 "shasum": ""
             },
             "require": {
@@ -745,7 +745,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-03-28 06:55:29"
+            "time": "2017-03-31 17:18:07"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1188,12 +1188,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/object-reflector.git",
-                "reference": "afd5797e7af7c9f529879ad5e8e8abe126c89dab"
+                "reference": "773f97c67f28de00d397be301821b06708fca0be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/object-reflector/zipball/afd5797e7af7c9f529879ad5e8e8abe126c89dab",
-                "reference": "afd5797e7af7c9f529879ad5e8e8abe126c89dab",
+                "url": "https://api.github.com/repos/sebastianbergmann/object-reflector/zipball/773f97c67f28de00d397be301821b06708fca0be",
+                "reference": "773f97c67f28de00d397be301821b06708fca0be",
                 "shasum": ""
             },
             "require": {
@@ -1225,7 +1225,7 @@
             ],
             "description": "Allows reflection of object attributes, including inherited and non-public ones",
             "homepage": "https://github.com/sebastianbergmann/object-reflector/",
-            "time": "2017-03-16 14:05:21"
+            "time": "2017-03-29 09:07:27"
         },
         {
             "name": "sebastian/recursion-context",
@@ -1422,7 +1422,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.1",
+        "php": ">=7.0",
         "ext-reflection": "*"
     },
     "platform-dev": []
