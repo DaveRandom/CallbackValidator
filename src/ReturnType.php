@@ -44,7 +44,7 @@ final class ReturnType extends Type
      * @param string|null $typeName
      * @param int $flags
      */
-    public function __construct($typeName, $flags)
+    public function __construct($typeName = null, $flags = self::COVARIANT)
     {
         $flags = (int)$flags;
 

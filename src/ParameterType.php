@@ -88,7 +88,7 @@ final class ParameterType extends Type
      * @param string|null $typeName
      * @param int $flags
      */
-    public function __construct($parameterName, $typeName, $flags)
+    public function __construct($parameterName, $typeName = null, $flags = self::CONTRAVARIANT)
     {
         $flags = (int)$flags;
 
