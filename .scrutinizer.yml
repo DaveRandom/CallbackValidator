@@ -34,15 +34,9 @@ coding_style:
         spaces:
             around_operators:
                 concatenation: true
-
+tools:
+    external_code_coverage: true
 build:
     environment:
         php:
             version: "7.0"
-    tests:
-        override:
-            -
-                command: 'phpunit --coverage-clover=some-file'
-                coverage:
-                    file: 'some-file'
-                    format: 'clover'
