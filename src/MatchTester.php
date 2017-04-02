@@ -58,7 +58,8 @@ final class MatchTester
 
         // Sub type cannot be nullable unless the super type is as well
         if ($subTypeNullable && !$superTypeNullable) {
-            return false;
+            // nullable void doesn't really make sense but for completeness...
+            return $superTypeName === BuiltInTypes::VOID && $subTypeName === BuiltInTypes::VOID;
         }
 
         // If the string is an exact match it's definitely acceptable

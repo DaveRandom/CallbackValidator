@@ -132,79 +132,293 @@ class MatchTesterTest extends TestCase
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, ClassImplementingNothing::class, true, true));
     }
 
-    /*
-    public function testClassNotImplementingTraversableDoesNotSatisfyIterable()
+    public function test_ClassImplementingToString_NotMatch_String_StrictMode()
     {
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::ITERABLE, ClassImplementingNothing::class));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingTraversable::class, false, false));
     }
 
-    public function testClassImplementingInvokeSatisfiesCallable()
+    public function test_ClassImplementingToString_Match_String_WeakMode()
     {
-        $this->assertTrue(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::CALLABLE, ClassImplementingInvoke::class));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingToString::class, false, true));
     }
 
-    public function testClassNotImplementingInvokeDoesNotSatisfyCallable()
+    public function test_NullableClassImplementingToString_NotMatch_String_StrictMode()
     {
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::CALLABLE, ClassImplementingNothing::class));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingToString::class, true, false));
     }
 
-    public function testClassImplementingToStringSatisfiesString()
+    public function test_NullableClassImplementingToString_NotMatch_String_WeakMode()
     {
-        $this->assertTrue(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::STRING, ClassImplementingToString::class));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingToString::class, true, true));
     }
 
-    public function testClassNotImplementingToStringDoesNotSatisfyString()
+    public function test_ClassImplementingToString_NotMatch_NullableString_StrictMode()
     {
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::STRING, ClassImplementingNothing::class));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingToString::class, false, false));
     }
 
-    public function test_NonScalarBuiltInTypesDoNotSatisfyAnyBuiltInTypesTheyShouldnt()
+    public function test_ClassImplementingToString_Match_NullableString_WeakMode()
     {
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::STRING, BuiltInTypes::ARRAY));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::STRING, BuiltInTypes::CALLABLE));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::STRING, BuiltInTypes::VOID));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::STRING, BuiltInTypes::ITERABLE));
-
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::INT, BuiltInTypes::ARRAY));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::INT, BuiltInTypes::CALLABLE));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::INT, BuiltInTypes::VOID));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::INT, BuiltInTypes::ITERABLE));
-
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::FLOAT, BuiltInTypes::ARRAY));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::FLOAT, BuiltInTypes::CALLABLE));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::FLOAT, BuiltInTypes::VOID));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::FLOAT, BuiltInTypes::ITERABLE));
-
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::BOOL, BuiltInTypes::ARRAY));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::BOOL, BuiltInTypes::CALLABLE));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::BOOL, BuiltInTypes::VOID));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::BOOL, BuiltInTypes::ITERABLE));
-
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::ARRAY, BuiltInTypes::CALLABLE));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::ARRAY, BuiltInTypes::VOID));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::ARRAY, BuiltInTypes::ITERABLE));
-
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::ARRAY));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::VOID));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::ITERABLE));
-
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::VOID, BuiltInTypes::ARRAY));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::VOID, BuiltInTypes::CALLABLE));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::VOID, BuiltInTypes::ITERABLE));
-
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::CALLABLE));
-        $this->assertFalse(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::VOID));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingToString::class, false, true));
     }
 
-    public function test_NonScalarBuiltInTypesSatisfyBuiltInTypesTheyShould()
+    public function test_NullableClassImplementingToString_NotMatch_NullableString_StrictMode()
     {
-        $this->assertTrue(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::ARRAY, BuiltInTypes::ARRAY));
-        $this->assertTrue(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::CALLABLE, BuiltInTypes::CALLABLE));
-        $this->assertTrue(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::VOID, BuiltInTypes::VOID));
-        $this->assertTrue(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::ARRAY));
-        $this->assertTrue(MatchTester::satisfiesBuiltInType_WeakMode(BuiltInTypes::ITERABLE, BuiltInTypes::ITERABLE));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingToString::class, true, false));
     }
-    */
+
+    public function test_NullableClassImplementingToString_Match_NullableString_WeakMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingToString::class, true, true));
+    }
+
+    public function test_ClassNotImplementingToString_NotMatch_String_StrictMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingNothing::class, false, false));
+    }
+
+    public function test_ClassNotImplementingToString_NotMatch_String_WeakMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingNothing::class, false, true));
+    }
+
+    public function test_NullableClassNotImplementingToString_NotMatch_String_StrictMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingNothing::class, true, false));
+    }
+
+    public function test_NullableClassNotImplementingToString_NotMatch_String_WeakMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingNothing::class, true, true));
+    }
+
+    public function test_ClassNotImplementingToString_NotMatch_NullableString_StrictMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingNothing::class, false, false));
+    }
+
+    public function test_ClassNotImplementingToString_NotMatch_NullableString_WeakMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingNothing::class, false, true));
+    }
+
+    public function test_NullableClassNotImplementingToString_NotMatch_NullableString_StrictMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingNothing::class, true, false));
+    }
+
+    public function test_NullableClassNotImplementingToString_NotMatch_NullableString_WeakMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingNothing::class, true, true));
+    }
+
+    public function test_ClassImplementingInvoke_NotMatch_Callable_StrictMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingTraversable::class, false, false));
+    }
+
+    public function test_ClassImplementingInvoke_Match_Callable_WeakMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingInvoke::class, false, true));
+    }
+
+    public function test_NullableClassImplementingInvoke_NotMatch_Callable_StrictMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingInvoke::class, true, false));
+    }
+
+    public function test_NullableClassImplementingInvoke_NotMatch_Callable_WeakMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingInvoke::class, true, true));
+    }
+
+    public function test_ClassImplementingInvoke_Match_NullableCallable_StrictMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingInvoke::class, false, false));
+    }
+
+    public function test_ClassImplementingInvoke_Match_NullableCallable_WeakMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingInvoke::class, false, true));
+    }
+
+    public function test_NullableClassImplementingInvoke_Match_NullableCallable_StrictMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingInvoke::class, true, false));
+    }
+
+    public function test_NullableClassImplementingInvoke_Match_NullableCallable_WeakMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingInvoke::class, true, true));
+    }
+
+    public function test_Closure_Match_Callable_StrictMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, \Closure::class, false, false));
+    }
+
+    public function test_Closure_Match_Callable_WeakMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, \Closure::class, false, true));
+    }
+
+    public function test_NullableClosure_NotMatch_Callable_StrictMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, \Closure::class, true, false));
+    }
+
+    public function test_NullableClosure_NotMatch_Callable_WeakMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, \Closure::class, true, true));
+    }
+
+    public function test_Closure_Match_NullableCallable_StrictMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, \Closure::class, false, false));
+    }
+
+    public function test_Closure_Match_NullableCallable_WeakMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, \Closure::class, false, true));
+    }
+
+    public function test_NullableClosure_Match_NullableCallable_StrictMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, \Closure::class, true, false));
+    }
+
+    public function test_NullableClosure_Match_NullableCallable_WeakMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, \Closure::class, true, true));
+    }
+
+    public function test_ClassNotImplementingInvokeOrClosure_NotMatch_Callable_StrictMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingNothing::class, false, false));
+    }
+
+    public function test_ClassNotImplementingInvokeOrClosure_NotMatch_Callable_WeakMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingNothing::class, false, true));
+    }
+
+    public function test_NullableClassNotImplementingInvokeOrClosure_NotMatch_Callable_StrictMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingNothing::class, true, false));
+    }
+
+    public function test_NullableClassNotImplementingInvokeOrClosure_NotMatch_Callable_WeakMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingNothing::class, true, true));
+    }
+
+    public function test_ClassNotImplementingInvokeOrClosure_NotMatch_NullableCallable_StrictMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingNothing::class, false, false));
+    }
+
+    public function test_ClassNotImplementingInvokeOrClosure_NotMatch_NullableCallable_WeakMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingNothing::class, false, true));
+    }
+
+    public function test_NullableClassNotImplementingInvokeOrClosure_NotMatch_NullableCallable_StrictMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingNothing::class, true, false));
+    }
+
+    public function test_NullableClassNotImplementingInvokeOrClosure_NotMatch_NullableCallable_WeakMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingNothing::class, true, true));
+    }
+
+    public function test_NotVoid_NotMatch_Void_WeakMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::ARRAY, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::ARRAY, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::ARRAY, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::ARRAY, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::BOOL, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::BOOL, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::BOOL, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::BOOL, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::CALLABLE, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::CALLABLE, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::CALLABLE, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::CALLABLE, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::FLOAT, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::FLOAT, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::FLOAT, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::FLOAT, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::INT, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::INT, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::INT, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::INT, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::ITERABLE, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::ITERABLE, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::ITERABLE, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::ITERABLE, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::STRING, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::STRING, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::STRING, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::STRING, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, ClassImplementingNothing::class, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, ClassImplementingNothing::class, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, ClassImplementingNothing::class, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, ClassImplementingNothing::class, true, false));
+    }
+
+    public function test_NotVoid_NotMatch_Void_StrictMode()
+    {
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::ARRAY, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::ARRAY, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::ARRAY, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::ARRAY, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::BOOL, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::BOOL, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::BOOL, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::BOOL, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::CALLABLE, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::CALLABLE, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::CALLABLE, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::CALLABLE, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::FLOAT, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::FLOAT, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::FLOAT, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::FLOAT, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::INT, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::INT, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::INT, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::INT, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::ITERABLE, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::ITERABLE, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::ITERABLE, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::ITERABLE, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::STRING, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::STRING, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::STRING, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::STRING, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, ClassImplementingNothing::class, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, ClassImplementingNothing::class, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, ClassImplementingNothing::class, false, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, ClassImplementingNothing::class, true, true));
+    }
+
+    public function test_Void_Match_Void_WeakMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::VOID, false, false));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::VOID, true, false));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::VOID, false, false));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::VOID, true, false));
+    }
+
+    public function test_Void_Match_Void_StrictMode()
+    {
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::VOID, false, true));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::VOID, true, true));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::VOID, false, true));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::VOID, true, true));
+    }
 
     public function test_ScalarSubTypes_Match_ScalarSuperTypes_WeakMode()
     {
