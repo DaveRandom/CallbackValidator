@@ -42,7 +42,7 @@ final class CallbackType
 
         return \strpos($callback, '::') !== false
             ? new \ReflectionMethod($callback)
-            : new \ReflectionFunction((string)$callback);
+            : new \ReflectionFunction($callback);
     }
 
     /**
