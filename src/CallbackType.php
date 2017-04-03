@@ -46,16 +46,6 @@ final class CallbackType
     }
 
     /**
-     * @param ReturnType $returnType
-     * @param ParameterType[] ...$parameters
-     */
-    public function __construct($returnType, ...$parameters)
-    {
-        $this->returnType = $returnType;
-        $this->parameters = $parameters;
-    }
-
-    /**
      * @param callable $callable
      * @param int $flags
      * @return CallbackType
@@ -78,6 +68,12 @@ final class CallbackType
         }
 
         return new CallbackType($returnType, ...$parameters);
+    }
+
+    public function __construct(ReturnType $returnType, ParameterType ...$parameters)
+    {
+        $this->returnType = $returnType;
+        $this->parameters = $parameters;
     }
 
     /**
