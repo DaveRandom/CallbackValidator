@@ -5,334 +5,334 @@ namespace DaveRandom\CallbackValidator\Test;
 use DaveRandom\CallbackValidator\Test\Fixtures\ClassImplementingInvoke;
 use DaveRandom\CallbackValidator\Test\Fixtures\ClassImplementingNothing;
 use DaveRandom\CallbackValidator\Test\Fixtures\ClassImplementingToString;
-use DaveRandom\CallbackValidator\Test\Fixtures\ClassImplementingTraversable;
+use DaveRandom\CallbackValidator\Test\Fixtures\ClassImplementingIteratorAggregate;
 use DaveRandom\CallbackValidator\MatchTester;
 use DaveRandom\CallbackValidator\BuiltInTypes;
 use PHPUnit\Framework\TestCase;
 
 class MatchTesterTest extends TestCase
 {
-    public function test_ClassImplementingTraversable_Match_Iterable_StrictMode()
+    public function test_ClassImplementingTraversableSubType_Match_IterableSuperType_StrictMode()
     {
-        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, ClassImplementingTraversable::class, false, false));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, ClassImplementingIteratorAggregate::class, false, false));
     }
 
-    public function test_ClassImplementingTraversable_Match_Iterable_WeakMode()
+    public function test_ClassImplementingTraversableSubType_Match_IterableSuperType_WeakMode()
     {
-        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, ClassImplementingTraversable::class, false, true));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, ClassImplementingIteratorAggregate::class, false, true));
     }
 
-    public function test_NullableClassImplementingTraversable_NotMatch_Iterable_StrictMode()
+    public function test_NullableClassImplementingTraversableSubType_NotMatch_IterableSuperType_StrictMode()
     {
-        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, ClassImplementingTraversable::class, true, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, ClassImplementingIteratorAggregate::class, true, false));
     }
 
-    public function test_NullableClassImplementingTraversable_NotMatch_Iterable_WeakMode()
+    public function test_NullableClassImplementingTraversableSubType_NotMatch_IterableSuperType_WeakMode()
     {
-        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, ClassImplementingTraversable::class, true, true));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, ClassImplementingIteratorAggregate::class, true, true));
     }
 
-    public function test_ClassImplementingTraversable_Match_NullableIterable_StrictMode()
+    public function test_ClassImplementingTraversableSubType_Match_NullableIterableSuperType_StrictMode()
     {
-        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, ClassImplementingTraversable::class, false, false));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, ClassImplementingIteratorAggregate::class, false, false));
     }
 
-    public function test_ClassImplementingTraversable_Match_NullableIterable_WeakMode()
+    public function test_ClassImplementingTraversableSubType_Match_NullableIterableSuperType_WeakMode()
     {
-        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, ClassImplementingTraversable::class, false, true));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, ClassImplementingIteratorAggregate::class, false, true));
     }
 
-    public function test_NullableClassImplementingTraversable_Match_NullableIterable_StrictMode()
+    public function test_NullableClassImplementingTraversableSubType_Match_NullableIterableSuperType_StrictMode()
     {
-        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, ClassImplementingTraversable::class, true, false));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, ClassImplementingIteratorAggregate::class, true, false));
     }
 
-    public function test_NullableClassImplementingTraversable_Match_NullableIterable_WeakMode()
+    public function test_NullableClassImplementingTraversableSubType_Match_NullableIterableSuperType_WeakMode()
     {
-        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, ClassImplementingTraversable::class, true, true));
+        $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, ClassImplementingIteratorAggregate::class, true, true));
     }
 
-    public function test_Array_Match_Iterable_StrictMode()
+    public function test_ArraySubType_Match_IterableSuperType_StrictMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, BuiltInTypes::ARRAY, false, false));
     }
 
-    public function test_Array_Match_Iterable_WeakMode()
+    public function test_ArraySubType_Match_IterableSuperType_WeakMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, BuiltInTypes::ARRAY, false, true));
     }
 
-    public function test_NullableArray_NotMatch_Iterable_StrictMode()
+    public function test_NullableArraySubType_NotMatch_IterableSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, BuiltInTypes::ARRAY, true, false));
     }
 
-    public function test_NullableArray_NotMatch_Iterable_WeakMode()
+    public function test_NullableArraySubType_NotMatch_IterableSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, BuiltInTypes::ARRAY, true, true));
     }
 
-    public function test_Array_Match_NullableIterable_StrictMode()
+    public function test_ArraySubType_Match_NullableIterableSuperType_StrictMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, BuiltInTypes::ARRAY, false, false));
     }
 
-    public function test_Array_Match_NullableIterable_WeakMode()
+    public function test_ArraySubType_Match_NullableIterableSuperType_WeakMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, BuiltInTypes::ARRAY, false, true));
     }
 
-    public function test_NullableArray_Match_NullableIterable_StrictMode()
+    public function test_NullableArraySubType_Match_NullableIterableSuperType_StrictMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, BuiltInTypes::ARRAY, true, false));
     }
 
-    public function test_NullableArray_Match_NullableIterable_WeakMode()
+    public function test_NullableArraySubType_Match_NullableIterableSuperType_WeakMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, BuiltInTypes::ARRAY, true, true));
     }
 
-    public function test_ClassNotImplementingTraversable_NotMatch_Iterable_StrictMode()
+    public function test_ClassNotImplementingTraversableSubType_NotMatch_IterableSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, ClassImplementingNothing::class, false, false));
     }
 
-    public function test_ClassNotImplementingTraversable_NotMatch_Iterable_WeakMode()
+    public function test_ClassNotImplementingTraversableSubType_NotMatch_IterableSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, ClassImplementingNothing::class, false, true));
     }
 
-    public function test_NullableClassNotImplementingTraversable_NotMatch_Iterable_StrictMode()
+    public function test_NullableClassNotImplementingTraversableSubType_NotMatch_IterableSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, ClassImplementingNothing::class, true, false));
     }
 
-    public function test_NullableClassNotImplementingTraversable_NotMatch_Iterable_WeakMode()
+    public function test_NullableClassNotImplementingTraversableSubType_NotMatch_IterableSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, false, ClassImplementingNothing::class, true, true));
     }
 
-    public function test_ClassNotImplementingTraversable_NotMatch_NullableIterable_StrictMode()
+    public function test_ClassNotImplementingTraversableSubType_NotMatch_NullableIterableSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, ClassImplementingNothing::class, false, false));
     }
 
-    public function test_ClassNotImplementingTraversable_NotMatch_NullableIterable_WeakMode()
+    public function test_ClassNotImplementingTraversableSubType_NotMatch_NullableIterableSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, ClassImplementingNothing::class, false, true));
     }
 
-    public function test_NullableClassNotImplementingTraversable_NotMatch_NullableIterable_StrictMode()
+    public function test_NullableClassNotImplementingTraversableSubType_NotMatch_NullableIterableSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, ClassImplementingNothing::class, true, false));
     }
 
-    public function test_NullableClassNotImplementingTraversable_NotMatch_NullableIterable_WeakMode()
+    public function test_NullableClassNotImplementingTraversableSubType_NotMatch_NullableIterableSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::ITERABLE, true, ClassImplementingNothing::class, true, true));
     }
 
-    public function test_ClassImplementingToString_NotMatch_String_StrictMode()
+    public function test_ClassImplementingToStringSubType_NotMatch_StringSuperType_StrictMode()
     {
-        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingTraversable::class, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingIteratorAggregate::class, false, false));
     }
 
-    public function test_ClassImplementingToString_Match_String_WeakMode()
+    public function test_ClassImplementingToStringSubType_Match_StringSuperType_WeakMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingToString::class, false, true));
     }
 
-    public function test_NullableClassImplementingToString_NotMatch_String_StrictMode()
+    public function test_NullableClassImplementingToStringSubType_NotMatch_StringSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingToString::class, true, false));
     }
 
-    public function test_NullableClassImplementingToString_NotMatch_String_WeakMode()
+    public function test_NullableClassImplementingToStringSubType_NotMatch_StringSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingToString::class, true, true));
     }
 
-    public function test_ClassImplementingToString_NotMatch_NullableString_StrictMode()
+    public function test_ClassImplementingToStringSubType_NotMatch_NullableStringSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingToString::class, false, false));
     }
 
-    public function test_ClassImplementingToString_Match_NullableString_WeakMode()
+    public function test_ClassImplementingToStringSubType_Match_NullableStringSuperType_WeakMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingToString::class, false, true));
     }
 
-    public function test_NullableClassImplementingToString_NotMatch_NullableString_StrictMode()
+    public function test_NullableClassImplementingToStringSubType_NotMatch_NullableStringSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingToString::class, true, false));
     }
 
-    public function test_NullableClassImplementingToString_Match_NullableString_WeakMode()
+    public function test_NullableClassImplementingToStringSubType_Match_NullableStringSuperType_WeakMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingToString::class, true, true));
     }
 
-    public function test_ClassNotImplementingToString_NotMatch_String_StrictMode()
+    public function test_ClassNotImplementingToStringSubType_NotMatch_StringSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingNothing::class, false, false));
     }
 
-    public function test_ClassNotImplementingToString_NotMatch_String_WeakMode()
+    public function test_ClassNotImplementingToStringSubType_NotMatch_StringSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingNothing::class, false, true));
     }
 
-    public function test_NullableClassNotImplementingToString_NotMatch_String_StrictMode()
+    public function test_NullableClassNotImplementingToStringSubType_NotMatch_StringSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingNothing::class, true, false));
     }
 
-    public function test_NullableClassNotImplementingToString_NotMatch_String_WeakMode()
+    public function test_NullableClassNotImplementingToStringSubType_NotMatch_StringSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, false, ClassImplementingNothing::class, true, true));
     }
 
-    public function test_ClassNotImplementingToString_NotMatch_NullableString_StrictMode()
+    public function test_ClassNotImplementingToStringSubType_NotMatch_NullableStringSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingNothing::class, false, false));
     }
 
-    public function test_ClassNotImplementingToString_NotMatch_NullableString_WeakMode()
+    public function test_ClassNotImplementingToStringSubType_NotMatch_NullableStringSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingNothing::class, false, true));
     }
 
-    public function test_NullableClassNotImplementingToString_NotMatch_NullableString_StrictMode()
+    public function test_NullableClassNotImplementingToStringSubType_NotMatch_NullableStringSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingNothing::class, true, false));
     }
 
-    public function test_NullableClassNotImplementingToString_NotMatch_NullableString_WeakMode()
+    public function test_NullableClassNotImplementingToStringSubType_NotMatch_NullableStringSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::STRING, true, ClassImplementingNothing::class, true, true));
     }
 
-    public function test_ClassImplementingInvoke_NotMatch_Callable_StrictMode()
+    public function test_ClassImplementingInvokeSubType_NotMatch_CallableSuperType_StrictMode()
     {
-        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingTraversable::class, false, false));
+        $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingIteratorAggregate::class, false, false));
     }
 
-    public function test_ClassImplementingInvoke_Match_Callable_WeakMode()
+    public function test_ClassImplementingInvokeSubType_Match_CallableSuperType_WeakMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingInvoke::class, false, true));
     }
 
-    public function test_NullableClassImplementingInvoke_NotMatch_Callable_StrictMode()
+    public function test_NullableClassImplementingInvokeSubType_NotMatch_CallableSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingInvoke::class, true, false));
     }
 
-    public function test_NullableClassImplementingInvoke_NotMatch_Callable_WeakMode()
+    public function test_NullableClassImplementingInvokeSubType_NotMatch_CallableSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingInvoke::class, true, true));
     }
 
-    public function test_ClassImplementingInvoke_Match_NullableCallable_StrictMode()
+    public function test_ClassImplementingInvokeSubType_Match_NullableCallableSuperType_StrictMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingInvoke::class, false, false));
     }
 
-    public function test_ClassImplementingInvoke_Match_NullableCallable_WeakMode()
+    public function test_ClassImplementingInvokeSubType_Match_NullableCallableSuperType_WeakMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingInvoke::class, false, true));
     }
 
-    public function test_NullableClassImplementingInvoke_Match_NullableCallable_StrictMode()
+    public function test_NullableClassImplementingInvokeSubType_Match_NullableCallableSuperType_StrictMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingInvoke::class, true, false));
     }
 
-    public function test_NullableClassImplementingInvoke_Match_NullableCallable_WeakMode()
+    public function test_NullableClassImplementingInvokeSubType_Match_NullableCallableSuperType_WeakMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingInvoke::class, true, true));
     }
 
-    public function test_Closure_Match_Callable_StrictMode()
+    public function test_ClosureSubType_Match_CallableSuperType_StrictMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, \Closure::class, false, false));
     }
 
-    public function test_Closure_Match_Callable_WeakMode()
+    public function test_ClosureSubType_Match_CallableSuperType_WeakMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, \Closure::class, false, true));
     }
 
-    public function test_NullableClosure_NotMatch_Callable_StrictMode()
+    public function test_NullableClosureSubType_NotMatch_CallableSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, \Closure::class, true, false));
     }
 
-    public function test_NullableClosure_NotMatch_Callable_WeakMode()
+    public function test_NullableClosureSubType_NotMatch_CallableSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, \Closure::class, true, true));
     }
 
-    public function test_Closure_Match_NullableCallable_StrictMode()
+    public function test_ClosureSubType_Match_NullableCallableSuperType_StrictMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, \Closure::class, false, false));
     }
 
-    public function test_Closure_Match_NullableCallable_WeakMode()
+    public function test_ClosureSubType_Match_NullableCallableSuperType_WeakMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, \Closure::class, false, true));
     }
 
-    public function test_NullableClosure_Match_NullableCallable_StrictMode()
+    public function test_NullableClosureSubType_Match_NullableCallableSuperType_StrictMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, \Closure::class, true, false));
     }
 
-    public function test_NullableClosure_Match_NullableCallable_WeakMode()
+    public function test_NullableClosureSubType_Match_NullableCallableSuperType_WeakMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, \Closure::class, true, true));
     }
 
-    public function test_ClassNotImplementingInvokeOrClosure_NotMatch_Callable_StrictMode()
+    public function test_ClassNotImplementingInvokeOrClosureSubType_NotMatch_CallableSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingNothing::class, false, false));
     }
 
-    public function test_ClassNotImplementingInvokeOrClosure_NotMatch_Callable_WeakMode()
+    public function test_ClassNotImplementingInvokeOrClosureSubType_NotMatch_CallableSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingNothing::class, false, true));
     }
 
-    public function test_NullableClassNotImplementingInvokeOrClosure_NotMatch_Callable_StrictMode()
+    public function test_NullableClassNotImplementingInvokeOrClosureSubType_NotMatch_CallableSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingNothing::class, true, false));
     }
 
-    public function test_NullableClassNotImplementingInvokeOrClosure_NotMatch_Callable_WeakMode()
+    public function test_NullableClassNotImplementingInvokeOrClosureSubType_NotMatch_CallableSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, false, ClassImplementingNothing::class, true, true));
     }
 
-    public function test_ClassNotImplementingInvokeOrClosure_NotMatch_NullableCallable_StrictMode()
+    public function test_ClassNotImplementingInvokeOrClosureSubType_NotMatch_NullableCallableSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingNothing::class, false, false));
     }
 
-    public function test_ClassNotImplementingInvokeOrClosure_NotMatch_NullableCallable_WeakMode()
+    public function test_ClassNotImplementingInvokeOrClosureSubType_NotMatch_NullableCallableSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingNothing::class, false, true));
     }
 
-    public function test_NullableClassNotImplementingInvokeOrClosure_NotMatch_NullableCallable_StrictMode()
+    public function test_NullableClassNotImplementingInvokeOrClosureSubType_NotMatch_NullableCallableSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingNothing::class, true, false));
     }
 
-    public function test_NullableClassNotImplementingInvokeOrClosure_NotMatch_NullableCallable_WeakMode()
+    public function test_NullableClassNotImplementingInvokeOrClosureSubType_NotMatch_NullableCallableSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::CALLABLE, true, ClassImplementingNothing::class, true, true));
     }
 
-    public function test_NotVoid_NotMatch_Void_WeakMode()
+    public function test_NotVoidSubType_NotMatch_VoidSuperType_WeakMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::ARRAY, false, false));
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::ARRAY, true, false));
@@ -368,7 +368,7 @@ class MatchTesterTest extends TestCase
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, ClassImplementingNothing::class, true, false));
     }
 
-    public function test_NotVoid_NotMatch_Void_StrictMode()
+    public function test_NotVoidSubType_NotMatch_VoidSuperType_StrictMode()
     {
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::ARRAY, false, true));
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::ARRAY, true, true));
@@ -404,7 +404,7 @@ class MatchTesterTest extends TestCase
         $this->assertFalse(MatchTester::isMatch(BuiltInTypes::VOID, true, ClassImplementingNothing::class, true, true));
     }
 
-    public function test_Void_Match_Void_WeakMode()
+    public function test_VoidSubType_Match_VoidSuperType_WeakMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::VOID, false, false));
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::VOID, true, false));
@@ -412,7 +412,7 @@ class MatchTesterTest extends TestCase
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::VOID, true, BuiltInTypes::VOID, true, false));
     }
 
-    public function test_Void_Match_Void_StrictMode()
+    public function test_VoidSubType_Match_VoidSuperType_StrictMode()
     {
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::VOID, false, true));
         $this->assertTrue(MatchTester::isMatch(BuiltInTypes::VOID, false, BuiltInTypes::VOID, true, true));

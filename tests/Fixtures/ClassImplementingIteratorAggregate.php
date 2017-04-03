@@ -2,4 +2,4 @@
 
 namespace DaveRandom\CallbackValidator\Test\Fixtures;
 
-abstract class ClassImplementingTraversable implements \IteratorAggregate {}
+abstract class ClassImplementingIteratorAggregate implements \IteratorAggregate {}
