@@ -34,6 +34,31 @@ final class MatchTester
     ];
 
     /**
+     * @param string $superTypeName
+     * @param string $subTypeName
+     * @return bool
+     */
+    public static function isWeakScalarMatch($superTypeName, $subTypeName)
+    {
+        // Nothing else satisfies array, callable, void or iterable
+        if (!isset(self::$scalarTypes[$superTypeName])) {
+            return false;
+        }
+
+        // Scalars can all cast to each other
+        if (isset(self::$scalarTypes[$subTypeName])) {
+            return true;
+        }
+
+        // Classes with __toString() satisfy string
+        if ($superTypeName === BuiltInTypes::STRING && \method_exists($subTypeName, '__toString')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @param string|null $superTypeName
      * @param bool $superTypeNullable
      * @param string|null $subTypeName
@@ -84,26 +109,7 @@ final class MatchTester
         // If the super type is built-in, check whether casting rules can succeed
         if (isset(self::$builtInTypes[$superTypeName])) {
             // Fail immediately in strict mode
-            if (!$weak) {
-                return false;
-            }
-
-            // Nothing else satisfies array, callable, void or iterable
-            if (!isset(self::$scalarTypes[$superTypeName])) {
-                return false;
-            }
-
-            // Scalars can all cast to each other
-            if (isset(self::$scalarTypes[$subTypeName])) {
-                return true;
-            }
-
-            // Classes with __toString() satisfy string
-            if ($superTypeName === BuiltInTypes::STRING && \method_exists($subTypeName, '__toString')) {
-                return true;
-            }
-
-            return false;
+            return $weak && self::isWeakScalarMatch($superTypeName, $subTypeName);
         }
 
         // We now know the super type is not built-in and there's no string match, sub type must not be built-in
