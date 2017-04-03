@@ -2,6 +2,7 @@
 
 namespace DaveRandom\CallbackValidator\Test;
 
+use DaveRandom\CallbackValidator\BuiltInTypes;
 use DaveRandom\CallbackValidator\Type;
 use PHPUnit\Framework\TestCase;
 
@@ -122,5 +123,158 @@ class TypeTest extends TestCase
         $this->assertFalse($type->isWeak);
         $this->assertFalse($type->allowsCovariance);
         $this->assertFalse($type->allowsContravariance);
+    }
+
+    public function testByRefMustBeIdentical()
+    {
+        $type = $this->createTypeInstance(Type::class, 0, false, false);
+
+        $this->assertSame(Type::class, $type->typeName);
+        $this->assertFalse($type->isByReference);
+
+        $this->assertTrue($type->isSatisfiedBy(Type::class, false, false));
+        $this->assertFalse($type->isSatisfiedBy(Type::class, false, true));
+
+        $type = $this->createTypeInstance(Type::class, Type::REFERENCE, false, false);
+
+        $this->assertSame(Type::class, $type->typeName);
+        $this->assertTrue($type->isByReference);
+
+        $this->assertTrue($type->isSatisfiedBy(Type::class, false, true));
+        $this->assertFalse($type->isSatisfiedBy(Type::class, false, false));
+    }
+
+    public function testIdenticalTypesAlwaysMatch()
+    {
+        $type = $this->createTypeInstance(Type::class, 0, false, false);
+
+        $this->assertSame(Type::class, $type->typeName);
+        $this->assertFalse($type->isNullable);
+
+        $this->assertTrue($type->isSatisfiedBy(Type::class, false, false));
+
+        $type = $this->createTypeInstance(Type::class, Type::NULLABLE, false, false);
+
+        $this->assertSame(Type::class, $type->typeName);
+        $this->assertTrue($type->isNullable);
+
+        $this->assertTrue($type->isSatisfiedBy(Type::class, true, false));
+    }
+
+    public function testValidCovariantTypeMatches()
+    {
+        $type = $this->createTypeInstance(Type::class, Type::NULLABLE, true, false);
+
+        $this->assertSame(Type::class, $type->typeName);
+        $this->assertTrue($type->isNullable);
+
+        $this->assertTrue($type->isSatisfiedBy(Type::class, false, false));
+    }
+
+    public function testInvalidCovariantTypeDoesNotMatch()
+    {
+        $type = $this->createTypeInstance(Type::class, 0, true, false);
+
+        $this->assertSame(Type::class, $type->typeName);
+        $this->assertFalse($type->isNullable);
+
+        $this->assertFalse($type->isSatisfiedBy(Type::class, true, false));
+    }
+
+    public function testValidCovariantTypeMatchesDoesNotMatchWhenCovarianceIsNotAllowed()
+    {
+        $type = $this->createTypeInstance(Type::class, Type::NULLABLE, false, false);
+
+        $this->assertSame(Type::class, $type->typeName);
+        $this->assertTrue($type->isNullable);
+
+        $this->assertFalse($type->isSatisfiedBy(Type::class, false, false));
+    }
+
+    public function testCovarianceRespectsWeakMode()
+    {
+        $type = $this->createTypeInstance(BuiltInTypes::STRING, 0, true, false);
+
+        $this->assertSame(BuiltInTypes::STRING, $type->typeName);
+        $this->assertFalse($type->isWeak);
+
+        $this->assertFalse($type->isSatisfiedBy(BuiltInTypes::INT, false, false));
+
+        $type = $this->createTypeInstance(BuiltInTypes::STRING, Type::WEAK, true, false);
+
+        $this->assertSame(BuiltInTypes::STRING, $type->typeName);
+        $this->assertTrue($type->isWeak);
+
+        $this->assertTrue($type->isSatisfiedBy(BuiltInTypes::INT, false, false));
+    }
+
+    public function testValidContravariantTypeMatches()
+    {
+        $type = $this->createTypeInstance(Type::class, 0, false, true);
+
+        $this->assertSame(Type::class, $type->typeName);
+        $this->assertFalse($type->isNullable);
+        $this->assertTrue($type->isSatisfiedBy(Type::class, true, false));
+    }
+
+    public function testInvalidContravariantTypeDoesNotMatch()
+    {
+        $type = $this->createTypeInstance(Type::class, Type::NULLABLE, false, true);
+
+        $this->assertSame(Type::class, $type->typeName);
+        $this->assertTrue($type->isNullable);
+
+        $this->assertFalse($type->isSatisfiedBy(Type::class, false, false));
+    }
+
+    public function testValidContravariantTypeDoesNotMatchWhenContravarianceIsNotAllowed()
+    {
+        $type = $this->createTypeInstance(Type::class, 0, false, false);
+
+        $this->assertSame(Type::class, $type->typeName);
+        $this->assertFalse($type->isNullable);
+
+        $this->assertFalse($type->isSatisfiedBy(Type::class, true, false));
+    }
+
+    public function testContravarianceRespectsWeakMode()
+    {
+        $type = $this->createTypeInstance(BuiltInTypes::STRING, 0, false, true);
+
+        $this->assertSame(BuiltInTypes::STRING, $type->typeName);
+        $this->assertFalse($type->isWeak);
+
+        $this->assertFalse($type->isSatisfiedBy(BuiltInTypes::INT, false, false));
+
+        $type = $this->createTypeInstance(BuiltInTypes::STRING, Type::WEAK, false, true);
+
+        $this->assertSame(BuiltInTypes::STRING, $type->typeName);
+        $this->assertTrue($type->isWeak);
+
+        $this->assertTrue($type->isSatisfiedBy(BuiltInTypes::INT, false, false));
+    }
+
+    public function testInvarianceRespectsWeakMode()
+    {
+        $type = $this->createTypeInstance(BuiltInTypes::STRING, 0, false, false);
+
+        $this->assertSame(BuiltInTypes::STRING, $type->typeName);
+        $this->assertFalse($type->isWeak);
+
+        $this->assertFalse($type->isSatisfiedBy(BuiltInTypes::INT, false, false));
+
+        $type = $this->createTypeInstance(BuiltInTypes::STRING, Type::WEAK, false, false);
+
+        $this->assertSame(BuiltInTypes::STRING, $type->typeName);
+        $this->assertTrue($type->isWeak);
+
+        $this->assertTrue($type->isSatisfiedBy(BuiltInTypes::INT, false, false));
+
+        $type = $this->createTypeInstance(BuiltInTypes::STRING, Type::WEAK | Type::NULLABLE, false, false);
+
+        $this->assertSame(BuiltInTypes::STRING, $type->typeName);
+        $this->assertTrue($type->isWeak);
+
+        $this->assertFalse($type->isSatisfiedBy(BuiltInTypes::INT, false, false));
     }
 }
