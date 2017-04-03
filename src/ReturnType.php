@@ -56,8 +56,8 @@ final class ReturnType extends Type
      */
     public function __toString()
     {
-        return $this->isNullable
+        return $this->isNullable && $this->typeName !== null
             ? '?' . $this->typeName
-            : $this->typeName;
+            : (string)$this->typeName;
     }
 }

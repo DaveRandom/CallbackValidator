@@ -20,29 +20,29 @@ final class CallbackType
      * This will accept things the PHP would fail to invoke due to scoping, but we can reflect them anyway. Do not add
      * a callable type-hint or this behaviour will break!
      *
-     * @param callable $callable
+     * @param callable $target
      * @return \ReflectionFunction|\ReflectionMethod
      * @throws \ReflectionException
      */
-    private static function reflectCallable($callable)
+    private static function reflectCallable($target)
     {
-        if ($callable instanceof \Closure) {
-            return new \ReflectionFunction($callable);
+        if ($target instanceof \Closure) {
+            return new \ReflectionFunction($target);
         }
 
-        if (\is_array($callable) && isset($callable[0], $callable[1])) {
-            return new \ReflectionMethod($callable[0], $callable[1]);
+        if (\is_array($target) && isset($target[0], $target[1])) {
+            return new \ReflectionMethod($target[0], $target[1]);
         }
 
-        if (\is_object($callable) && \method_exists($callable, '__invoke')) {
-            return new \ReflectionMethod($callable, '__invoke');
+        if (\is_object($target) && \method_exists($target, '__invoke')) {
+            return new \ReflectionMethod($target, '__invoke');
         }
 
-        $callable = (string)$callable;
+        $target = (string)$target;
 
-        return \strpos($callable, '::') !== false
-            ? new \ReflectionMethod($callable)
-            : new \ReflectionFunction($callable);
+        return \strpos($target, '::') !== false
+            ? new \ReflectionMethod($target)
+            : new \ReflectionFunction($target);
     }
 
     /**
