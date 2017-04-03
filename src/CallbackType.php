@@ -30,17 +30,19 @@ final class CallbackType
             return new \ReflectionFunction($callback);
         }
 
-        if (\is_array($callback)) {
+        if (\is_array($callback) && isset($callback[0], $callback[1])) {
             return new \ReflectionMethod($callback[0], $callback[1]);
         }
 
-        if (\is_object($callback)) {
+        if (\is_object($callback) && \method_exists($callback, '__invoke')) {
             return new \ReflectionMethod($callback, '__invoke');
         }
 
+        $callback = (string)$callback;
+
         return \strpos($callback, '::') !== false
             ? new \ReflectionMethod($callback)
-            : new \ReflectionFunction($callback);
+            : new \ReflectionFunction((string)$callback);
     }
 
     /**
